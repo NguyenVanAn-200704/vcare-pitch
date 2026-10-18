@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vcare — Pitch Dự án AI thực chiến</title>
+<!-- Fonts: Be Vietnam Pro (thiết kế cho tiếng Việt) + JetBrains Mono (nhãn, số liệu nhỏ) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap&subset=vietnamese" rel="stylesheet">
+<style>
+/* ===========================================
+   THEME — đổi màu/kiểu chữ toàn deck tại đây
+   Một màu nhấn duy nhất: teal (lấy từ nút chính của app Vcare)
+   =========================================== */
+:root {
+  --ink: #0B1D26;        /* chữ chính, nền slide tối */
+  --ink-2: #33454F;      /* chữ phụ */
+  --muted: #6F7F88;      /* chú thích, nguồn */
+  --line: #D7E0E4;       /* viền mảnh */
+  --paper: #F3F6F7;      /* nền slide sáng */
+  --card: #FFFFFF;
+  --accent: #0E8C8A;     /* màu nhấn duy nhất */
+  --accent-2: #2BB5AE;   /* cùng sắc độ, dùng trên nền tối */
+  --accent-soft: #DCF0EF;
+  --dark-text: #EAF2F3;
+  --dark-muted: #8FA3AB;
+  --font: 'Be Vietnam Pro', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --stage-bg: #0B1D26;
+  --slide-bg: #F3F6F7;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   VIEWPORT BASE (frontend-slides, bắt buộc)
+   =========================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================
+   BASE TYPOGRAPHY & SLIDE CHROME
+   =========================================== */
+body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.slide { font-family: var(--font); color: var(--ink); }
+.slide.dark { background: var(--ink); color: var(--dark-text); }
+/* Nền: lưới mảnh gợi bản đồ / bảng điều khiển xe */
+.slide.light::before, .slide.dark::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(11,29,38,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(11,29,38,.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.slide.dark::before { background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); }
+.pad { position: absolute; left: 96px; right: 96px; top: 76px; bottom: 112px; display: flex; flex-direction: column; }
+.kicker { font-family: var(--mono); font-size: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+.dark .kicker { color: var(--accent-2); }
+.hl { font-size: 58px; line-height: 1.14; font-weight: 700; letter-spacing: -0.015em; max-width: 1680px; }
+.hl .num { color: var(--accent); }
+.dark .hl .num { color: var(--accent-2); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 38px; display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; font-size: 17px; line-height: 1.4; color: var(--muted); }
+.foot .pg { font-family: var(--mono); font-size: 17px; white-space: nowrap; }
+.dark .foot { color: var(--dark-muted); }
+.sim { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.42em; font-weight: 700; letter-spacing: .02em; color: var(--ink-2); border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 12px; vertical-align: middle; position: relative; top: -0.18em; white-space: nowrap; }
+.sim.s { font-size: 15px; top: -2px; padding: 2px 9px; }
+.code { font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.notes { display: none; }
+
+/* ===========================================
+   STEP ANIMATIONS (điều khiển bằng mũi tên / click)
+   .frag[data-s=n] hiện khi bước hiện tại >= n
+   =========================================== */
+.frag { opacity: 0; transform: translateY(24px); transition: opacity .55s var(--ease), transform .55s var(--ease); }
+.frag.fade { transform: none; }
+.frag.on { opacity: 1; transform: none; }
+.auto { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.slide.visible .auto { opacity: 1; transform: none; }
+.slide.visible .auto.d1 { transition-delay: .12s } .slide.visible .auto.d2 { transition-delay: .24s } .slide.visible .auto.d3 { transition-delay: .36s } .slide.visible .auto.d4 { transition-delay: .48s }
+.slide.final .shot img { transform: none !important; }
+.no-anim *, .no-anim *::before, .no-anim *::after { transition: none !important; animation: none !important; }
+
+/* Khung ảnh UI dùng chung */
+.shot { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px rgba(11,29,38,.10); position: relative; }
+.shot img { display: block; width: 100%; height: auto; max-width: none; max-height: none; transition: transform .8s var(--ease); transform-origin: 50% 50%; }
+.shot .tag { position: absolute; left: 14px; top: 12px; font-family: var(--mono); font-size: 14px; font-weight: 700; background: rgba(11,29,38,.82); color: #fff; padding: 4px 10px; border-radius: 8px; }
+.callout { display: inline-flex; align-items: center; gap: 12px; background: var(--ink); color: #fff; font-size: 24px; font-weight: 600; padding: 12px 20px; border-radius: 14px; position: relative; }
+.callout::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 0 6px rgba(43,181,174,.25); flex: none; }
+.callout .k { font-family: var(--mono); font-size: 15px; color: var(--accent-2); font-weight: 700; }
+.arrow { flex: none; width: 54px; display: flex; align-items: center; justify-content: center; color: var(--accent); }
+.arrow svg { width: 46px; height: 46px; }
+
+/* ===========================================
+   PHONE FRAME — khung điện thoại dùng chung cho ảnh mobile
+   =========================================== */
+.ph { background: #050E13; border-radius: 40px; padding: 10px; box-shadow: 0 22px 50px rgba(11,29,38,.22); flex: none; position: relative; }
+.ph .sc { border-radius: 31px; overflow: hidden; background: #EEF6F8; position: relative; }
+.ph .sc img { display: block; width: 100%; height: auto; max-width: none; max-height: none; transition: transform .8s var(--ease); transform-origin: 50% 30%; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 22px 50px rgba(11,29,38,.14); position: relative; flex: none; }
+.panel .bar { height: 34px; background: #0B1D26; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-family: var(--mono); font-size: 14px; color: #8FA3AB; }
+.panel .bar i { width: 10px; height: 10px; border-radius: 50%; background: #33454F; display: inline-block; }
+.panel img { display: block; width: 100%; height: auto; max-width: none; max-height: none; }
+.slide.final .ph .sc img { transform: none !important; }
+.ph .imw { position: relative; }
+.ph .hi { position: absolute; left: 3%; right: 3%; border: 4px solid var(--accent-2); border-radius: 14px; box-shadow: 0 0 0 4px rgba(43,181,174,.25), 0 0 24px rgba(43,181,174,.6); }
+
+.cap2 { font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.sub2 { font-size: 19px; color: var(--ink-2); line-height: 1.4; }
+
+/* ===========================================
+   SLIDE 1 — TITLE
+   =========================================== */
+.s01 .brand { display: flex; align-items: center; gap: 22px; }
+.s01 .brand img { width: 96px; height: 96px; }
+.s01 .brand span { font-size: 64px; font-weight: 800; letter-spacing: -0.02em; }
+.s01 .brand span b { color: var(--accent-2); font-weight: 800; }
+.s01 h1 { font-size: 80px; line-height: 1.08; font-weight: 800; letter-spacing: -0.025em; margin-top: 64px; max-width: 1000px; }
+.s01 h1 em { font-style: normal; color: var(--accent-2); }
+.s01 .tagline { font-size: 32px; line-height: 1.4; color: var(--dark-text); opacity: .86; margin-top: 36px; max-width: 1080px; }
+.s01 .meta { position: absolute; left: 96px; bottom: 96px; font-family: var(--mono); font-size: 20px; color: var(--dark-muted); letter-spacing: .02em; }
+.s01 .meta b { color: var(--dark-text); font-weight: 700; }
+.s01 .route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+.phone { position: absolute; right: 190px; top: 70px; width: 440px; height: 940px; border-radius: 58px; background: #050E13; padding: 18px; box-shadow: 0 40px 90px rgba(0,0,0,.45), 0 0 0 2px rgba(255,255,255,.08) inset; }
+.phone .screen { width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #EEF6F8; position: relative; }
+.phone .screen img { width: 100%; height: auto; max-width: none; max-height: none; display: block; transform: translateY(70px); opacity: 0; transition: transform 1s var(--ease) 1.9s, opacity .8s ease 1.9s; }
+.slide.visible .phone .screen img { transform: none; opacity: 1; }
+.bubble { position: absolute; right: 560px; top: 740px; background: var(--accent); color: #fff; font-size: 30px; font-weight: 600; line-height: 1.3; padding: 22px 28px; border-radius: 26px 26px 6px 26px; width: 440px; min-height: 120px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.bubble .caret { display: inline-block; width: 3px; height: 1.1em; background: #fff; vertical-align: -4px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.s01 .demo-note { position: absolute; right: 190px; bottom: 30px; width: 440px; text-align: center; font-family: var(--mono); font-size: 15px; color: var(--dark-muted); }
+
+/* ===========================================
+   SLIDE 2 — MARKET (dẫn vào câu chuyện người dùng)
+   =========================================== */
+.mkt { display: flex; gap: 70px; margin-top: 24px; flex: 1; align-items: center; }
+.rings { position: relative; width: 600px; height: 600px; flex: none; }
+.ring { position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.6); opacity: 0; transition: transform .9s var(--ease), opacity .9s var(--ease); display: flex; flex-direction: column; align-items: center; }
+.slide.visible .ring { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.ring.tam { width: 600px; height: 600px; background: var(--card); border: 1px solid var(--line); transition-delay: .5s; padding-top: 34px; }
+.ring.sam { width: 410px; height: 410px; background: var(--accent-soft); top: 60%; transition-delay: .3s; padding-top: 30px; }
+.ring.som { width: 250px; height: 250px; background: var(--accent); color: #fff; top: 70%; transition-delay: .1s; justify-content: center; }
+.ring .k { font-family: var(--mono); font-size: 18px; font-weight: 700; letter-spacing: .06em; }
+.ring .v { font-size: 44px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.ring .d { font-size: 19px; color: var(--ink-2); text-align: center; max-width: 340px; line-height: 1.3; }
+.ring.som .v { font-size: 30px; white-space: nowrap; } .ring.som .d { color: rgba(255,255,255,.9); max-width: 190px; font-size: 17px; }
+.mkt .facts { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.ftag { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: -6px; }
+.fact { display: flex; gap: 22px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+.fact .v { font-size: 48px; font-weight: 800; color: var(--accent); min-width: 250px; letter-spacing: -0.02em; }
+.fact .l { font-size: 24px; color: var(--ink-2); line-height: 1.35; }
+.bridge { background: var(--ink); color: #fff; border-radius: 18px; padding: 22px 28px; font-size: 26px; line-height: 1.4; display: flex; align-items: center; gap: 20px; }
+.bridge b { color: var(--accent-2); }
+.bridge svg { width: 40px; height: 40px; flex: none; color: var(--accent-2); }
+
+/* ===========================================
+   SLIDE 3 — PERSONA
+   =========================================== */
+.persona { display: flex; align-items: center; gap: 20px; margin-top: 30px; font-size: 26px; color: var(--ink-2); }
+.persona .av { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 28px; }
+.persona b { color: var(--ink); }
+.story { display: flex; align-items: stretch; margin-top: 40px; height: 560px; }
+.scene { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 34px 36px; display: flex; flex-direction: column; }
+.scene .time { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+.scene .ill { flex: 1; display: grid; place-items: center; margin: 14px 0; }
+.scene .ill svg { width: 380px; height: 300px; }
+.scene .cap { font-size: 40px; font-weight: 700; line-height: 1.2; }
+.scene .cap small { display: block; font-size: 23px; font-weight: 500; color: var(--ink-2); margin-top: 10px; line-height: 1.35; }
+.story .arrow { width: 70px; }
+
+/* ===========================================
+   SLIDE 4 — PAIN POINTS (khám phá định tính)
+   =========================================== */
+.disc { display: flex; gap: 30px; margin-top: 40px; align-items: stretch; }
+.pain { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 32px 34px; display: flex; flex-direction: column; }
+.pain .rk { display: flex; justify-content: space-between; align-items: center; }
+.pain .rk span:first-child { width: 50px; height: 50px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px; }
+.pain .sev { font-family: var(--mono); font-size: 15px; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; padding: 4px 12px; font-weight: 700; }
+.pain .ic { width: 84px; height: 84px; border-radius: 22px; background: var(--accent-soft); display: grid; place-items: center; margin: 28px 0 22px; color: var(--accent); }
+.pain .ic svg { width: 46px; height: 46px; }
+.pain h3 { font-size: 38px; line-height: 1.2; font-weight: 700; }
+.pain p { font-size: 26px; color: var(--ink-2); line-height: 1.4; margin-top: 12px; }
+.method { width: 420px; flex: none; background: var(--ink); color: #fff; border-radius: 24px; padding: 32px 34px; display: flex; flex-direction: column; gap: 20px; }
+.method .lbl { color: var(--accent-2); }
+.method .big { font-size: 34px; font-weight: 800; line-height: 1.2; }
+.method .big span { color: var(--accent-2); }
+.method ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.method li { font-size: 23px; line-height: 1.35; display: flex; gap: 12px; color: #EAF2F3; }
+.method li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); flex: none; margin-top: 11px; }
+.punch { margin-top: 34px; font-size: 34px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 18px; }
+.punch span { color: var(--accent); }
+
+/* ===========================================
+   SLIDE 5 — JTBD (job story hai phía)
+   =========================================== */
+.jgrid { display: grid; grid-template-columns: 1fr 70px 1fr; gap: 22px 0; margin-top: 36px; }
+.jhead { display: flex; align-items: center; gap: 14px; font-size: 28px; font-weight: 700; padding-bottom: 4px; }
+.jhead .av { width: 50px; height: 50px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 20px; font-weight: 800; }
+.job { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 32px 34px; min-height: 214px; }
+.job h4 { font-size: 32px; line-height: 1.25; margin-bottom: 8px; display: flex; gap: 12px; align-items: baseline; }
+.job h4 span { font-family: var(--mono); font-size: 16px; color: var(--accent); font-weight: 700; flex: none; }
+.job p { font-size: 26px; line-height: 1.4; color: var(--ink-2); }
+.jlink { display: grid; place-items: center; color: var(--accent); }
+.jlink svg { width: 40px; height: 40px; }
+
+/* ===========================================
+   SLIDE 6 — COMPETITOR MATRIX
+   =========================================== */
+.cmp { display: flex; gap: 50px; margin-top: 30px; flex: 1; }
+.plane { position: relative; width: 1100px; height: 650px; flex: none; }
+.plane .box { position: absolute; left: 70px; right: 0; top: 0; bottom: 60px; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink); background: var(--card); border-radius: 0 18px 0 0; }
+.plane .gap { position: absolute; left: calc(70px + 58%); right: 0; top: 0; height: 40%; border: 2px dashed var(--accent); border-radius: 0 18px 0 0; background: rgba(14,140,138,.06); }
+.plane .gap span { position: absolute; left: 18px; top: 14px; font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--accent); }
+.plane .xl { position: absolute; left: 70px; right: 0; bottom: 14px; display: flex; justify-content: space-between; font-size: 20px; color: var(--ink-2); font-weight: 600; }
+.plane .yl { position: absolute; left: 0; top: 0; bottom: 60px; width: 60px; font-size: 20px; color: var(--ink-2); font-weight: 600; }
+.plane .yl span { position: absolute; left: 30px; transform-origin: 0 0; transform: rotate(-90deg); white-space: nowrap; }
+.comp { position: absolute; display: flex; gap: 14px; align-items: flex-start; width: 380px; }
+.comp .pt { width: 26px; height: 26px; border-radius: 50%; background: var(--ink-2); flex: none; margin-top: 4px; box-shadow: 0 0 0 6px rgba(51,69,79,.12); }
+.comp b { font-size: 28px; display: block; }
+.comp small { font-size: 22px; line-height: 1.35; color: var(--ink-2); display: block; margin-top: 4px; }
+.comp small a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 15px; }
+.comp.vc .pt { width: 40px; height: 40px; background: var(--accent); box-shadow: 0 0 0 12px rgba(14,140,138,.18), 0 0 40px rgba(14,140,138,.55); margin-top: -2px; }
+.comp.vc b { color: var(--accent); font-size: 32px; }
+.cmp .side { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+.cmp .side .t { font-size: 28px; font-weight: 700; line-height: 1.3; }
+.cmp .side ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.cmp .side li { font-size: 25px; line-height: 1.35; color: var(--ink-2); display: flex; gap: 12px; }
+.cmp .side li::before { content: "✓"; color: var(--accent); font-weight: 800; flex: none; }
+.cmp .side .warn { font-size: 20px; color: var(--ink-2); border: 1.5px dashed var(--muted); border-radius: 14px; padding: 12px 16px; line-height: 1.4; }
+.foot a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); }
+
+/* ===========================================
+   SLIDE 7 — SOLUTION
+   =========================================== */
+.pos { font-size: 32px; color: var(--ink-2); margin-top: 26px; }
+.pos b { color: var(--ink); }
+.vals { display: flex; gap: 32px; margin-top: 40px; flex: 1; }
+.val { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; display: flex; flex-direction: column; }
+.val .pp { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+.val .pp .p { border: 1.5px solid var(--line); border-radius: 8px; padding: 3px 9px; color: var(--ink-2); font-weight: 700; }
+.val .pp svg { width: 22px; height: 22px; color: var(--accent); }
+.val .pp .v { background: var(--accent); color: #fff; border-radius: 8px; padding: 3px 9px; font-weight: 700; }
+.val h3 { font-size: 38px; line-height: 1.22; margin: 18px 0 26px; font-weight: 700; }
+.val .shot { margin-top: auto; }
+.s07 .val .shot { margin-top: 0; }
+.s07 .val h3 { min-height: 140px; }
+
+/* ===========================================
+   SLIDE 8 — SMART FLOW (mỗi bước có giao diện minh họa)
+   =========================================== */
+.lane { border-radius: 24px; padding: 22px 26px; position: relative; transition: opacity .6s var(--ease), filter .6s var(--ease); }
+.lane.before { background: var(--card); border: 1px solid var(--line); margin-top: 24px; padding: 16px 22px; }
+.s08.s1 .lane.before { opacity: .4; filter: grayscale(1); }
+.lane .lt { font-family: var(--mono); font-size: 18px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: baseline; }
+.lane .lt .time { font-family: var(--font); text-transform: none; letter-spacing: 0; font-size: 22px; color: var(--ink-2); font-weight: 600; }
+.chain { display: flex; align-items: center; gap: 10px; }
+.chain .n { flex: 1; text-align: center; font-size: 21px; font-weight: 600; padding: 14px 10px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); line-height: 1.25; }
+.chain .sep { color: var(--muted); font-size: 24px; flex: none; }
+.lane.after { background: var(--ink); color: #fff; margin-top: 26px; padding: 26px 26px 30px; }
+.lane.after .lt { color: var(--accent-2); }
+.lane.after .lt .time { color: #fff; }
+.steps { display: flex; gap: 12px; align-items: stretch; }
+.st { flex: 1; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.14); padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; transition: background .5s, box-shadow .5s, border-color .5s; }
+.st .hd { display: flex; flex-direction: column; gap: 6px; }
+.st .nm { font-size: 26px; font-weight: 700; line-height: 1.2; }
+.badge { display: inline-block; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: .05em; padding: 2px 8px; border-radius: 6px; align-self: flex-start; }
+.badge.ai { background: rgba(43,181,174,.18); color: var(--accent-2); }
+.badge.rule { background: rgba(255,255,255,.1); color: var(--dark-muted); }
+.badge.hu { border: 1px solid rgba(255,255,255,.35); color: #fff; }
+.s08.s2 .st.ai1, .s08.s3 .st.ai2, .s08.s4 .st.ai3 { background: rgba(43,181,174,.16); border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(43,181,174,.22), 0 0 34px rgba(43,181,174,.35); }
+.s08.s2 .st.ai1 .badge.ai, .s08.s3 .st.ai2 .badge.ai, .s08.s4 .st.ai3 .badge.ai { background: var(--accent-2); color: var(--ink); }
+/* mini UI: giao diện minh họa rút gọn */
+.mini { background: #F4F8F9; color: var(--ink); border-radius: 12px; padding: 18px 14px; font-size: 17px; min-height: 300px; justify-content: center; gap: 14px; line-height: 1.3; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.mini .big { font-size: 30px; font-weight: 800; line-height: 1.2; color: var(--ink); }
+.mini .sub { font-size: 22px; color: var(--ink-2); line-height: 1.3; }
+.mini .row { display: flex; justify-content: space-between; gap: 6px; background: #fff; border: 1px solid #E2EAED; border-radius: 8px; padding: 6px 8px; }
+.mini .row b { font-weight: 700; }
+.mini .k { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.mini .tot { background: var(--accent-soft); border-radius: 8px; padding: 6px 8px; font-weight: 700; color: var(--accent); }
+.mini .bub { align-self: flex-end; background: var(--accent); color: #fff; border-radius: 12px 12px 3px 12px; padding: 7px 10px; font-weight: 600; max-width: 95%; }
+.mini .rep { background: #fff; border: 1px solid #E2EAED; border-radius: 12px 12px 12px 3px; padding: 7px 10px; }
+.mini .ok { color: var(--accent); font-weight: 700; }
+.mini .btn { margin-top: auto; background: var(--accent); color: #fff; border-radius: 999px; text-align: center; padding: 7px; font-weight: 700; }
+.mini .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; font-weight: 700; font-size: 16px; }
+.mini .pill.w { background: #FFF4D6; color: #7A5A00; } .mini .pill.g { background: var(--accent-soft); color: var(--accent); }
+.mini .noti { display: flex; gap: 8px; align-items: flex-start; background: #fff; border: 1px solid #E2EAED; border-radius: 10px; padding: 8px; }
+.mini .noti i { width: 24px; height: 24px; border-radius: 7px; background: var(--accent); flex: none; display: grid; place-items: center; color: #fff; font-style: normal; font-size: 13px; }
+.legend { display: flex; gap: 30px; margin-top: 14px; font-size: 19px; color: var(--ink-2); align-items: center; }
+.legend .note { margin-left: auto; font-family: var(--mono); font-size: 15px; color: var(--muted); }
+
+/* ===========================================
+   SLIDE 9–10 — DEMO (khung điện thoại đồng đều)
+   =========================================== */
+.demo { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 28px; }
+.dcol { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.dcol .lbl { align-self: flex-start; }
+.dcol .callout { align-self: stretch; justify-content: flex-start; font-size: 21px; padding: 12px 16px; }
+.demo .arrow { align-self: center; margin-top: -80px; width: 48px; }
+.s09 .ph { width: 330px; } .s09 .ph .sc { height: 600px; }
+.s09 .dcol { width: 400px; }
+.s10 .ph { width: 320px; } .s10 .ph .sc { height: 470px; }
+.s10 .dcol { width: 400px; } .s10 .dcol.wide { width: 620px; }
+.s10 .sync { display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 600; color: var(--ink-2); align-self: stretch; }
+.s10 .sync .st { border-radius: 999px; padding: 6px 14px; font-size: 19px; white-space: nowrap; flex: none; } .s10 .sync .syn { white-space: nowrap; }
+.s10 .sync .wait { background: #FFF4D6; color: #7A5A00; } .s10 .sync .ok { background: var(--accent-soft); color: var(--accent); }
+.s10 .sync .bar { width: 40px; flex: none; height: 4px; background: var(--accent); border-radius: 2px; }
+.s10 .sync .syn { font-size: 20px; }
+.s10 .dcol .callout { font-size: 21px; padding: 10px 16px; }
+.s10 .panel { width: 500px; }
+
+/* ===========================================
+   SLIDE 11 — ARCHITECTURE (ranh giới AI / hệ thống)
+   =========================================== */
+.arch { display: flex; align-items: stretch; margin-top: 44px; min-height: 540px; }
+.tier { flex: 1; border-radius: 22px; padding: 24px 24px; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.tier.ai { background: var(--ink); color: #fff; border-color: var(--ink); }
+.tier.sys { background: var(--accent-soft); border-color: var(--accent); }
+.tier .lbl { margin-bottom: 10px; }
+.tier.ai .lbl { color: var(--accent-2); }
+.tier.sys .lbl { color: var(--accent); }
+.tier h3 { font-size: 34px; margin-bottom: 14px; line-height: 1.2; }
+.tier ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.tier li { font-size: 24px; padding: 8px 14px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); line-height: 1.3; }
+.tier.ai li { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.16); }
+.tier.sys li { background: #fff; border-color: rgba(14,140,138,.35); }
+.tier .stack { margin-top: auto; padding-top: 14px; font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.tier.ai .stack { color: var(--dark-muted); }
+.arch .arrow { width: 64px; align-self: center; }
+.layers { margin-top: 40px; display: grid; grid-template-columns: 250px 1fr 1fr 1fr; gap: 16px; align-items: stretch; }
+.layers .lay-t { background: var(--ink); color: #fff; border-radius: 16px; padding: 18px 24px; font-size: 30px; font-weight: 800; line-height: 1.2; display: flex; align-items: center; }
+.layers .lay { background: var(--card); border: 1.5px solid var(--accent); border-radius: 16px; padding: 22px 22px; display: flex; gap: 14px; align-items: flex-start; }
+.layers .lay > span { width: 38px; height: 38px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 19px; flex: none; }
+.layers .lay b { display: block; font-size: 26px; line-height: 1.25; }
+.layers .lay small { display: block; font-size: 21px; color: var(--ink-2); margin-top: 6px; line-height: 1.3; }
+.guard { margin-top: 34px; display: flex; gap: 18px; align-items: center; font-size: 22px; color: var(--ink-2); }
+.guard .no { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--ink-2); border: 2px dashed var(--muted); border-radius: 12px; padding: 8px 16px; }
+.guard .no b { color: #B3261E; font-size: 24px; }
+.tests { display: flex; gap: 18px; margin-top: 22px; }
+.test { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; }
+.test .lbl { margin-bottom: 6px; }
+.test b { font-size: 23px; display: block; line-height: 1.3; }
+.test small { font-size: 18px; color: var(--ink-2); display: block; margin-top: 4px; line-height: 1.35; }
+
+/* ===========================================
+   SLIDE 12 — GTM & BUSINESS MODEL
+   =========================================== */
+.gtm { display: grid; grid-template-columns: 820px 1fr; gap: 40px; margin-top: 34px; align-items: start; }
+.money { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; position: relative; }
+.money .lbl { margin-bottom: 18px; }
+.mrow { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; margin-top: 46px; }
+.valbox { margin-top: 10px; background: var(--accent-soft); border-radius: 18px; padding: 20px 24px; }
+.valbox .vb-k { font-family: var(--mono); font-size: 16px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.valbox .vb-m { font-size: 27px; margin-top: 8px; line-height: 1.3; } .valbox .vb-m b { color: var(--accent); }
+.valbox .vb-s { font-size: 19px; color: var(--ink-2); margin-top: 8px; line-height: 1.35; }
+.chanbox { padding: 22px 26px; } .chanbox .chan { margin-top: 10px; }
+.node { border-radius: 16px; padding: 20px 26px; font-size: 28px; font-weight: 700; background: var(--paper); border: 1px solid var(--line); white-space: nowrap; }
+.node.vc { background: var(--ink); color: #fff; border-color: var(--ink); }
+.node.ws { background: var(--accent-soft); border-color: var(--accent); }
+.flowline { flex: 1; position: relative; height: 4px; background: var(--line); border-radius: 2px; }
+.flowline span { position: absolute; left: 0; right: 0; top: -38px; text-align: center; font-size: 19px; color: var(--ink-2); font-weight: 600; }
+.flowline::after { content: ""; position: absolute; inset: 0; background: var(--accent); border-radius: 2px; transform: scaleX(0); transform-origin: left; transition: transform 1s var(--ease) .4s; }
+.slide.visible .flowline::after { transform: scaleX(1); }
+.flowline.muted::after { background: var(--muted); }
+.chan { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+.chan div { display: flex; gap: 14px; font-size: 22px; line-height: 1.35; align-items: flex-start; }
+.chan span { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 17px; flex: none; }
+.prices { display: flex; flex-direction: column; gap: 18px; }
+.price { border-radius: 22px; padding: 24px 28px; background: var(--card); border: 1px solid var(--line); }
+.price.main { border: 2px solid var(--accent); box-shadow: 0 16px 40px rgba(14,140,138,.15); }
+.price .name { font-family: var(--mono); font-size: 18px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.price.main .name { color: var(--accent); }
+.price .amt { font-size: 60px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-top: 6px; }
+.price .amt small { font-size: 22px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; }
+.price .inc { font-size: 21px; color: var(--ink-2); margin-top: 8px; line-height: 1.4; }
+.b2b { font-size: 24px; color: var(--ink-2); line-height: 1.4; }
+.b2b b { color: var(--ink); }
+
+/* ===========================================
+   SLIDE 13 — ROADMAP (gọn, dễ nhìn)
+   =========================================== */
+.road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 44px; position: relative; }
+.track { position: absolute; left: 30px; right: 30px; top: 31px; height: 6px; background: var(--line); border-radius: 3px; }
+.track::after { content: ""; position: absolute; inset: 0; background: var(--accent); border-radius: 3px; transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease) .2s; }
+.slide.visible .track::after { transform: scaleX(1); }
+.phase { position: relative; }
+.phase .dot { width: 68px; height: 68px; border-radius: 50%; background: var(--card); border: 6px solid var(--accent); display: grid; place-items: center; font-weight: 800; font-size: 26px; color: var(--accent); position: relative; z-index: 1; }
+.phase.p1 .dot { background: var(--accent); color: #fff; }
+.phase .card { margin-top: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 26px 28px; }
+.phase.p1 .card { border: 2px solid var(--accent); box-shadow: 0 16px 40px rgba(14,140,138,.14); }
+.phase .pn { font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.phase h3 { font-size: 40px; margin: 6px 0 4px; }
+.phase .when { font-size: 22px; color: var(--ink-2); margin-bottom: 18px; }
+.kpi { border-top: 1px solid var(--line); padding: 12px 0; font-size: 23px; line-height: 1.35; display: flex; gap: 14px; align-items: baseline; }
+.kpi .rev { margin-left: auto; font-family: var(--mono); font-size: 19px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.kpi .c { font-family: var(--mono); font-size: 15px; color: var(--accent); font-weight: 700; flex: none; width: 30px; }
+.next { margin-top: 30px; display: flex; align-items: center; gap: 22px; background: var(--ink); color: #fff; border-radius: 20px; padding: 20px 28px; font-size: 24px; }
+.next b { font-family: var(--mono); font-size: 17px; letter-spacing: .06em; color: var(--accent-2); flex: none; }
+.next span { display: flex; align-items: center; gap: 10px; }
+.next span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); }
+
+/* ===========================================
+   SLIDE 14 — CẢM ƠN (trợ lý Vcare)
+   =========================================== */
+.s14 .glow { position: absolute; right: 230px; top: 150px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(43,181,174,.35) 0%, rgba(43,181,174,0) 65%); }
+.s14 .mascot { position: absolute; right: 300px; top: 150px; width: 520px; height: 700px; object-fit: contain; max-width: none; max-height: none; filter: drop-shadow(0 30px 40px rgba(0,0,0,.35)); }
+.s14 .floor { position: absolute; right: 360px; top: 850px; width: 400px; height: 40px; border-radius: 50%; background: radial-gradient(ellipse, rgba(43,181,174,.35), rgba(43,181,174,0) 70%); }
+.s14 .say { position: absolute; right: 760px; top: 190px; background: #fff; color: var(--ink); font-size: 30px; font-weight: 700; padding: 18px 26px; border-radius: 26px 26px 6px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.s14 .thanks { font-size: 112px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; margin-top: 70px; }
+.s14 .thanks em { font-style: normal; color: var(--accent-2); }
+.s14 .tag { font-size: 36px; font-weight: 700; margin-top: 34px; max-width: 900px; line-height: 1.3; }
+.s14 .tag em { font-style: normal; color: var(--accent-2); }
+.s14 .try { margin-top: 46px; display: flex; align-items: center; gap: 30px; }
+.s14 .try img { width: 250px; height: 250px; border-radius: 22px; background: #fff; padding: 12px; box-shadow: 0 0 0 6px rgba(43,181,174,.35); max-width: none; max-height: none; }
+.s14 .try b { display: block; font-size: 34px; font-weight: 800; }
+.s14 .try span { display: block; font-family: var(--mono); font-size: 24px; color: var(--accent-2); margin-top: 8px; }
+.s14 .try small { display: block; font-size: 22px; color: var(--dark-muted); margin-top: 18px; }
+.s14 .qa { margin-top: 40px; font-size: 26px; color: var(--dark-muted); }
+.s14 .brand2 { display: flex; align-items: center; gap: 18px; }
+.s14 .brand2 img { width: 70px; height: 70px; }
+.s14 .brand2 span { font-size: 46px; font-weight: 800; }
+.s14 .brand2 span b { color: var(--accent-2); }
+.links { font-family: var(--mono); font-size: 18px; color: var(--dark-muted); }
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section class="slide dark s01" data-title="Title">
+  <svg class="route" viewBox="0 0 1920 1080" aria-hidden="true">
+    <path d="M -40 980 C 420 900, 640 760, 980 800 S 1460 980, 1980 760" fill="none" stroke="rgba(43,181,174,.28)" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round"/>
+    <circle cx="980" cy="800" r="7" fill="#2BB5AE"/>
+  </svg>
+  <div class="pad">
+    <div class="brand auto"><img src="assets/logo-round.png" alt="Logo Vcare"><span>V<b>care</b></span></div>
+    <h1 class="auto d1">Nhắc đúng mốc, tìm đúng ca, <em>bắt đầu bằng một câu nói.</em></h1>
+    <p class="tagline auto d2">Trợ lý hậu mãi AI cho chủ xe điện VinFast và cố vấn dịch vụ</p>
+  </div>
+  <div class="meta auto d3"><b>Nhóm P-100</b> · Dự án AI thực chiến · VinUni Build 2026</div>
+  <div class="phone auto d2"><div class="screen"><img src="assets/m07_review.png" alt="Màn Xem lại trước khi gửi"></div></div>
+  <div class="bubble" id="typeBubble" data-text="Đặt lịch bảo dưỡng cho tôi vào ngày mai"><span class="tx"></span><span class="caret"></span></div>
+  <div class="demo-note">Giao diện thật · dữ liệu demo</div>
+  <aside class="notes">Chào hội đồng, chúng em là nhóm P-100. Câu trên màn hình là điều chủ xe muốn nói với xưởng: đặt lịch bảo dưỡng cho tôi vào ngày mai. Một câu như vậy là điểm bắt đầu; chủ xe vẫn xem lại và xưởng xác nhận. Vcare là trợ lý hậu mãi AI cho chủ xe điện VinFast và cố vấn dịch vụ: nhắc đúng mốc theo dữ liệu xe, giải thích việc cần làm và tìm xưởng có ca phù hợp. Trong bảy phút, chúng em đi từ thị trường, người dùng, sản phẩm đang chạy đến cách đưa vào xưởng.</aside>
+</section>
+
+<!-- ============ SLIDE 2 — MARKET ============ -->
+<section class="slide light s02" data-title="Thị trường">
+  <div class="pad">
+    <div class="kicker">02 · Thị trường</div>
+    <h2 class="hl" style="font-size:52px">Xe điện chiếm ~40% ô tô mới năm 2025; chỉ 9 tháng 2026, VinFast đã bàn giao <span class="num">177.697 xe</span>, vượt cả năm 2025</h2>
+    <div class="mkt">
+      <div class="rings">
+        <div class="ring tam"><span class="k">TAM</span><span class="v">9,9 tỷ đ/năm</span><span class="d">~1.500 xưởng có phục vụ xe điện</span></div>
+        <div class="ring sam"><span class="k">SAM</span><span class="v">2,6 tỷ đ/năm</span><span class="d">400 xưởng VinFast · beachhead</span></div>
+        <div class="ring som"><span class="k">SOM</span><span class="v">395 tr đ/năm</span><span class="d">60 xưởng trong 3 năm</span></div>
+      </div>
+      <div class="facts">
+        <div class="ftag auto d1">Thị trường chung</div>
+        <div class="fact auto d1"><span class="v">~40%</span><span class="l">ô tô mới bán năm 2025 là xe điện <span class="code">[1]</span></span></div>
+        <div class="ftag auto d2">Điển hình: VinFast</div>
+        <div class="fact auto d2"><span class="v">175.099</span><span class="l">xe VinFast bàn giao năm 2025 <span class="code">[2]</span></span></div>
+        <div class="fact auto d3"><span class="v">177.697</span><span class="l">xe VinFast trong 9 tháng 2026 <span class="code">[3]</span></span></div>
+        <div class="fact auto d4"><span class="v">≥ 1 lượt</span><span class="l">bảo dưỡng định kỳ mỗi xe mỗi năm (mốc 15.000 km / 12 tháng) <span class="code">[5]</span></span></div>
+        <div class="bridge auto d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Mỗi lượt bảo dưỡng là một chủ xe phải <b>tự nhớ mốc, tự hỏi giá, tự tìm ca</b>. Như anh Minh.</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span><a href="https://www.iea.org/reports/global-ev-outlook-2026/trends-in-electric-cars">[1] IEA GEVO 2026</a> · <a href="https://vinfastauto.com/vn_vi/vinfast-lap-ky-luc-ban-giao-xe-o-to-dien-tai-viet-nam-2025">[2] VinFast 13/01/2026</a> · <a href="https://tapchikinhtetaichinh.vn/vinfast-ban-giao-23-624-o-to-dien-tai-viet-nam-trong-thang-9-169227.html">[3] Tạp chí Kinh tế Tài chính 11/10/2026</a> · [4] DNHN 15/06/2026 · <a href="https://vinfastauto.com/vn_vi/dich-vu-bao-duong-oto">[5] VinFast</a> · 549.000đ/xưởng/tháng; TAM có giả định</span><span class="pg">02 / 14</span></footer>
+  <aside class="notes">Bắt đầu từ thị trường. Xe điện đang tăng nhanh: gần 40% ô tô mới bán ở Việt Nam năm 2025 là xe điện. VinFast là điển hình và là điểm bắt đầu của Vcare: chỉ 9 tháng 2026, hãng đã bàn giao 177.697 xe, vượt cả năm 2025. Tính từ đầu 2024, hãng đã bàn giao khoảng 440 nghìn ô tô điện trong nước, và mỗi xe có ít nhất một lượt bảo dưỡng định kỳ mỗi năm. Hơn 400 xưởng VinFast đang phục vụ lượng xe này. Tính theo thuê bao phần mềm cho xưởng, SAM khoảng 2,6 tỷ đồng mỗi năm; TAM 9,9 tỷ là giả định còn phải khảo sát. Chúng em bắt đầu từ VinFast vì đã có dữ liệu bảo dưỡng chuẩn hóa; các hãng khác là bước mở rộng. Nhưng đằng sau mỗi lượt bảo dưỡng là một chủ xe tự nhớ mốc, tự hỏi giá, tự tìm ca. Như anh Minh.</aside>
+</section>
+
+<!-- ============ SLIDE 3 — PERSONA ============ -->
+<section class="slide light s03" data-title="Câu chuyện của Minh">
+  <div class="pad">
+    <div class="kicker">03 · Câu chuyện người dùng</div>
+    <h2 class="hl">Minh bận việc, <span class="num">dễ quên mốc</span>, chưa biết xưởng còn ca nào và có thể phải sắp xếp lại</h2>
+    <div class="persona"><span class="av">M</span><span><b>Minh</b> · VF 8 Plus · 29.900 km · Cầu Giấy · <i>nhân vật minh họa</i></span></div>
+    <div class="story">
+      <div class="scene frag" data-s="1">
+        <div class="time">Bận việc</div>
+        <div class="ill"><svg viewBox="0 0 300 240"><rect x="105" y="20" width="90" height="170" rx="18" fill="#0B1D26"/><rect x="115" y="38" width="70" height="120" rx="6" fill="#F3F6F7"/><circle cx="150" cy="174" r="7" fill="#33454F"/><circle cx="150" cy="96" r="38" fill="none" stroke="#0E8C8A" stroke-width="6"/><path d="M150 72 V96 L168 108" stroke="#0E8C8A" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M215 60 l30 30 M245 60 l-30 30" stroke="#B3261E" stroke-width="6" stroke-linecap="round"/></svg></div>
+        <div class="cap">Lịch cá nhân kín</div>
+      </div>
+      <div class="arrow frag fade" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="scene frag" data-s="2">
+        <div class="time">Hỏi xưởng</div>
+        <div class="ill"><svg viewBox="0 0 300 240"><rect x="30" y="40" width="240" height="120" rx="24" fill="#0B1D26"/><path d="M80 160 l-10 40 l46 -40z" fill="#0B1D26"/><text x="150" y="90" text-anchor="middle" font-family="Be Vietnam Pro" font-size="26" font-weight="700" fill="#fff">“Ca sáng</text><text x="150" y="128" text-anchor="middle" font-family="Be Vietnam Pro" font-size="26" font-weight="700" fill="#fff">đủ rồi anh”</text></svg></div>
+        <div class="cap">Chưa chọn được ca</div>
+      </div>
+      <div class="arrow frag fade" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="scene frag" data-s="3">
+        <div class="time">Đổi kế hoạch</div>
+        <div class="ill"><svg viewBox="0 0 300 240"><path d="M110 30 h80 M110 210 h80" stroke="#0B1D26" stroke-width="10" stroke-linecap="round"/><path d="M118 34 C118 90 182 100 182 120 C182 140 118 150 118 206 M182 34 C182 90 118 100 118 120 C118 140 182 150 182 206" stroke="#0B1D26" stroke-width="6" fill="none"/><path d="M128 190 Q150 160 172 190 Z" fill="#0E8C8A"/><path d="M140 62 h20 l-10 14z" fill="#0E8C8A"/></svg></div>
+        <div class="cap">Phải sắp xếp lại</div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Tình huống minh họa từ vấn đề nhóm đặt ra; không phải trích dẫn hay số đo thực tế</span><span class="pg">03 / 14</span></footer>
+  <aside class="notes">Đây là Minh, một nhân vật minh họa: lái VF 8 Plus, sắp tới mốc 30.000 km. Minh bận việc, lịch cá nhân kín, nên dễ để lỡ mốc bảo dưỡng. Khi nhớ ra và hỏi xưởng, Minh chưa biết xưởng nào còn ca phù hợp, có khi nghe “ca sáng đủ rồi anh”. Kết quả là phải sắp xếp lại công việc và gia đình. Đây là tình huống minh họa từ vấn đề nhóm đặt ra, không phải trích dẫn hay số đo thực tế. Câu hỏi là: những điều này có thật với người dùng không?</aside>
+</section>
+
+<!-- ============ SLIDE 4 — PAIN POINTS / DISCOVERY ============ -->
+<section class="slide light s04" data-title="Pain point & nghiên cứu ban đầu">
+  <div class="pad">
+    <div class="kicker">04 · Pain point &amp; nghiên cứu ban đầu</div>
+    <h2 class="hl">Trao đổi với khoảng <span class="num">10 chủ xe và 3 xưởng</span>: ba hướng ưu tiên cần kiểm chứng</h2>
+    <div class="disc">
+      <div class="pain frag" data-s="1">
+        <div class="rk"><span>1</span><span class="sev">cần kiểm chứng</span></div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/></svg></div>
+        <h3>Nhớ mốc chăm xe</h3>
+        <p>Chủ động sắp xếp thay vì đợi xe có vấn đề</p>
+      </div>
+      <div class="pain frag" data-s="2">
+        <div class="rk"><span>2</span><span class="sev">cần kiểm chứng</span></div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div>
+        <h3>Hiểu trước khi đến</h3>
+        <p>Rõ công việc, dự toán và thời lượng</p>
+      </div>
+      <div class="pain frag" data-s="3">
+        <div class="rk"><span>3</span><span class="sev">cần kiểm chứng</span></div>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+        <h3>Tìm xưởng và ca</h3>
+        <p>Hướng tới bớt công hỏi lại</p>
+      </div>
+      <div class="method">
+        <div class="lbl">Khám phá định tính</div>
+        <div class="big">~10 chủ xe <span>·</span> 3 xưởng</div>
+        <ul>
+          <li>Đối chiếu ghi chép phỏng vấn</li>
+          <li>Không suy ra tỷ lệ thị trường</li>
+          <li>Đo hiệu quả trong pilot</li>
+        </ul>
+      </div>
+    </div>
+    <div class="punch frag fade" data-s="3"><span>→</span>Phỏng vấn để hiểu hành vi; pilot để kiểm chứng hiệu quả.</div>
+  </div>
+  <footer class="foot"><span>Khám phá định tính; chủ đề là hướng ưu tiên, chưa khẳng định mọi người đều gặp</span><span class="pg">04 / 14</span></footer>
+  <aside class="notes">Để kiểm tra, nhóm trao đổi với khoảng 10 chủ xe và 3 xưởng. Đây là khám phá định tính, nên chúng em không đưa ra tỷ lệ thị trường. Từ ghi chép, ba chủ đề lặp lại được chọn làm hướng ưu tiên: nhớ mốc chăm xe để chủ động sắp xếp; hiểu trước khi đến, tức là rõ công việc, dự toán và thời lượng; và tìm xưởng, tìm ca mà bớt công hỏi lại. Chúng em chưa khẳng định mọi người tham gia đều gặp cả ba. Nguyên tắc của nhóm: phỏng vấn để hiểu hành vi, pilot để kiểm chứng hiệu quả.</aside>
+</section>
+
+<!-- ============ SLIDE 5 — JTBD ============ -->
+<section class="slide light s05" data-title="Jobs To Be Done">
+  <div class="pad">
+    <div class="kicker">05 · Jobs To Be Done</div>
+    <h2 class="hl" style="font-size:52px">Ba việc chủ xe cần làm xong khớp với <span class="num">ba việc xưởng cần làm được</span></h2>
+    <div class="jgrid">
+      <div class="jhead"><span class="av">M</span>Chủ xe</div><div></div><div class="jhead"><span class="av">CV</span>Xưởng / cố vấn dịch vụ</div>
+      <div class="job frag" data-s="1"><h4><span>JOB 1</span>Biết khi nào xe thực sự cần bảo dưỡng</h4><p>Nhắc theo km, thời gian, lịch sử xe — để không bỏ lỡ hay đi quá sớm</p></div>
+      <div class="jlink frag fade" data-s="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></div>
+      <div class="job frag" data-s="1"><h4><span>JOB A</span>Biết đúng xe nào cần bảo dưỡng, đúng lúc</h4><p>Hệ thống chỉ ra xe sắp đến hạn — để chủ động liên hệ, không soát tay</p></div>
+      <div class="job frag" data-s="2"><h4><span>JOB 2</span>Hiểu và tin phương án bảo dưỡng</h4><p>Rõ vì sao làm, căn cứ, chi phí — để tự tin đồng ý</p></div>
+      <div class="jlink frag fade" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></div>
+      <div class="job frag" data-s="2"><h4><span>JOB B</span>Giúp khách hiểu và đồng ý</h4><p>Giải thích bằng dữ liệu xe, quy tắc, bảng giá — để khách tự quyết</p></div>
+      <div class="job frag" data-s="3"><h4><span>JOB 3</span>Sắp xếp bảo dưỡng ít gián đoạn</h4><p>Lịch có thời lượng dự kiến, được xác nhận — để chủ động sinh hoạt</p></div>
+      <div class="jlink frag fade" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></div>
+      <div class="job frag" data-s="3"><h4><span>JOB C</span>Chốt lịch xưởng thực hiện được</h4><p>Đề xuất lịch theo khả năng tiếp nhận — để giữ đúng lời hẹn</p></div>
+    </div>
+  </div>
+  <footer class="foot"><span>Rút gọn từ job story của khám phá định tính; bản đầy đủ trong tài liệu nhóm</span><span class="pg">05 / 14</span></footer>
+  <aside class="notes">Chúng em viết lại vấn đề thành job story cho cả hai phía, và chúng khớp nhau theo từng cặp. Chủ xe cần biết khi nào xe thực sự cần bảo dưỡng; xưởng cần biết đúng xe nào sắp đến hạn để chủ động liên hệ. Chủ xe cần hiểu và tin phương án: vì sao làm, căn cứ, chi phí; xưởng cần giải thích phương án bằng dữ liệu xe và bảng giá. Cuối cùng, chủ xe muốn một lịch ít gián đoạn, được xác nhận rõ; xưởng muốn chốt lịch mà mình thực sự làm được. Vcare được thiết kế quanh ba cặp việc này.</aside>
+</section>
+
+<!-- ============ SLIDE 6 — COMPETITORS ============ -->
+<section class="slide light s06" data-title="Đối thủ & giải pháp thay thế">
+  <div class="pad">
+    <div class="kicker">06 · Đối thủ &amp; giải pháp thay thế</div>
+    <h2 class="hl" style="font-size:52px">Vcare phát triển một tổ hợp: <span class="num">kế hoạch theo xe → tìm ca → gửi yêu cầu bằng hội thoại</span></h2>
+    <div class="cmp">
+      <div class="plane">
+        <div class="box"></div>
+        <div class="gap frag fade" data-s="4"><span>ĐỊNH VỊ MỤC TIÊU</span></div>
+        <div class="xl"><span>Thông tin rời rạc</span><span>Mức gắn với lịch xưởng →</span><span>Theo khung giờ / sức chứa</span></div>
+        <div class="yl"><span style="top:520px">Form / điện thoại → Hội thoại có căn cứ</span></div>
+        <div class="comp frag" data-s="1" style="left:650px;top:380px;"><span class="pt"></span><div><b>Ứng dụng VinFast</b><small>Đặt lịch theo khung giờ trống <a href="https://baodautu.vn/thay-doi-thoi-quen-su-dung-o-to-voi-ung-dung-quan-ly-xe-thong-minh-d168763.html">[a]</a></small></div></div>
+        <div class="comp frag" data-s="2" style="left:330px;top:440px;width:330px;"><span class="pt"></span><div><b>Open24 Gara</b><small>Báo giá, kho, nhắc bảo dưỡng <a href="https://open24.vn/gara-oto-xe-may">[b]</a></small></div></div>
+        <div class="comp frag" data-s="2" style="left:330px;top:260px;width:330px;"><span class="pt"></span><div><b>VC Garage</b><small>Quản lý xưởng, nhắc qua Zalo OA <a href="https://vcgarage.com/">[c]</a></small></div></div>
+        <div class="comp frag" data-s="3" style="left:110px;top:90px;width:330px;"><span class="pt"></span><div><b>Hotline / Zalo</b><small>Linh hoạt; lưu lịch tùy xưởng</small></div></div>
+        <div class="comp vc frag" data-s="4" style="left:740px;top:70px;width:340px;"><span class="pt"></span><div><b>Vcare</b><small>Hội thoại + ca theo sức chứa</small></div></div>
+      </div>
+      <div class="side">
+        <div class="t frag" data-s="4">Vcare làm được gì</div>
+        <ul class="frag" data-s="4">
+          <li>Nhắc theo hồ sơ xe: ODO, thời gian, lịch sử</li>
+          <li>Giải thích kế hoạch kèm nguồn, dự toán, thời lượng</li>
+          <li>Tìm xưởng có ca theo vị trí và sức chứa</li>
+          <li>Gửi yêu cầu để cố vấn kiểm tra, xác nhận</li>
+        </ul>
+        <div class="warn frag" data-s="4">Chưa xác nhận tích hợp DMS / hệ thống hãng.</div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Định vị giả thuyết, chưa benchmark · <a href="https://baodautu.vn/thay-doi-thoi-quen-su-dung-o-to-voi-ung-dung-quan-ly-xe-thong-minh-d168763.html">[a] Báo Đầu tư 30/06/2022</a> · <a href="https://open24.vn/gara-oto-xe-may">[b] open24.vn</a> · <a href="https://vcgarage.com/">[c] vcgarage.com</a> · <a href="https://vinfastauto.com/vn_vi/huong-dan-su-dung-tien-ich-dich-vu-tren-ung-dung-vinfast">app VinFast</a> · tra cứu 18/10/2026</span><span class="pg">06 / 14</span></footer>
+  <aside class="notes">Chủ xe và xưởng đang có lựa chọn tốt. Theo mô tả công khai, ứng dụng VinFast cho đặt lịch bảo dưỡng theo khung giờ trống tại xưởng VinFast. Open24 và VC Garage quản lý tiếp nhận, báo giá, kho, kế toán và có nhắc bảo dưỡng phía xưởng. Hotline và Zalo rất linh hoạt; việc lưu lịch tùy quy trình từng xưởng. Vcare nhắm vào một tổ hợp: kế hoạch theo xe có giải thích, tìm ca theo sức chứa, và gửi yêu cầu bằng hội thoại để cố vấn xác nhận. Đây là định vị giả thuyết, chưa phải kết quả benchmark, và chúng em chưa xác nhận tích hợp DMS hay hệ thống hãng.</aside>
+</section>
+
+<!-- ============ SLIDE 7 — SOLUTION ============ -->
+<section class="slide light s07" data-title="Giải pháp tổng quan">
+  <div class="pad">
+    <div class="kicker">07 · Giải pháp</div>
+    <h2 class="hl">Vcare nối lời nhắc với <span class="num">yêu cầu có ngữ cảnh</span></h2>
+    <p class="pos auto"><b>Trợ lý hậu mãi AI cho xưởng dịch vụ xe điện;</b> app miễn phí cho chủ xe.</p>
+    <div class="vals">
+      <div class="val auto d1">
+        <div class="pp"><span class="p">1 Nhớ mốc chăm xe</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V1</span></div>
+        <h3>Nhắc đúng xe → hiểu việc cần làm</h3>
+        <div class="shot"><img src="assets/v1_notif.png" alt="Thông báo nhắc bảo dưỡng"></div>
+      </div>
+      <div class="val auto d2">
+        <div class="pp"><span class="p">3 Tìm xưởng và ca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V2</span></div>
+        <h3>Nói nhu cầu → tìm xưởng có ca phù hợp</h3>
+        <div class="shot"><img src="assets/v2_card.png" alt="Thẻ xưởng có ca phù hợp"></div>
+      </div>
+      <div class="val auto d3">
+        <div class="pp"><span class="p">2 Hiểu trước khi đến</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V3</span></div>
+        <h3>Xem trước dự toán → xưởng xác nhận → hai bên cùng trạng thái</h3>
+        <div class="shot"><img src="assets/v3_status.png" alt="Chi phí tham khảo và trạng thái Đã xác nhận"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Giao diện thật · dữ liệu demo · thông báo nhắc mô phỏng · ảnh V2 trên xe VF 5 Plus</span><span class="pg">07 / 14</span></footer>
+  <aside class="notes">Giải pháp gói trong một câu: Vcare nối lời nhắc với một yêu cầu có ngữ cảnh. Thứ nhất, nhắc theo dữ liệu xe: ODO, thời gian và lịch sử. Thứ hai, giúp chủ xe hiểu kế hoạch và dự toán trước khi đến. Thứ ba, chủ xe nói nhu cầu, Vcare tìm xưởng có ca phù hợp theo vị trí và năng lực phục vụ; chủ xe xem lại, gửi, và xưởng xác nhận. Chúng em không hứa mọi lời nhắc đều thành lịch hẹn, hay khách đến nơi sẽ không phải chờ. Mục tiêu là bớt bước hỏi lại và hai bên cùng nhìn một trạng thái.</aside>
+</section>
+
+<!-- ============ SLIDE 8 — SMART FLOW ============ -->
+<section class="slide light s08" data-title="Luồng thông minh">
+  <div class="pad">
+    <div class="kicker">08 · Luồng thông minh</div>
+    <h2 class="hl" style="font-size:52px">Từ nhiều cuộc gọi rời rạc sang một luồng có ngữ cảnh: <span class="num">AI hỗ trợ 3 bước</span>, con người quyết định 2 bước</h2>
+    <div class="lane before"><div class="lt" style="margin:0"><span>Trước</span><span class="time">Nhớ mốc → gọi xưởng → chờ gọi lại → hỏi ca → hỏi giá → đến nơi</span></div></div>
+    <div class="lane after frag" data-s="1">
+      <div class="lt"><span>Sau khi có Vcare</span><span class="time frag fade" data-s="5">Mục tiêu pilot: ≤ 3 phút từ yêu cầu đến gửi lịch hợp lệ <span class="code" style="color:#8FA3AB">(K3)</span></span></div>
+      <div class="steps">
+        <div class="st"><div class="hd"><span class="badge rule">RULE</span><span class="nm">Nhắc</span></div><div class="mini"><div class="big">Còn 100 km tới mốc</div><div class="sub">theo ODO, thời gian</div></div></div>
+        <div class="st ai1"><div class="hd"><span class="badge ai">✦ AI 1</span><span class="nm">Kế hoạch</span></div><div class="mini"><div class="big">1,14–2,85 tr · 215 phút</div><div class="sub">kèm nguồn tài liệu</div></div></div>
+        <div class="st ai2"><div class="hd"><span class="badge ai">✦ AI 2</span><span class="nm">Hiểu yêu cầu</span></div><div class="mini"><div class="big">“Ngày mai” = 19/10</div><div class="sub">theo thời điểm hỏi</div></div></div>
+        <div class="st ai3"><div class="hd"><span class="badge ai">✦ AI 3</span><span class="nm">Xưởng có ca</span></div><div class="mini"><div class="big">Xưởng còn chỗ</div><div class="sub">vị trí + sức chứa</div></div></div>
+        <div class="st"><div class="hd"><span class="badge hu">NGƯỜI</span><span class="nm">Xem lại và gửi</span></div><div class="mini"><div class="big">Khách bấm gửi</div><div class="sub">gợi ý chưa giữ chỗ</div></div></div>
+        <div class="st"><div class="hd"><span class="badge hu">NGƯỜI</span><span class="nm">Xưởng xác nhận</span></div><div class="mini"><div class="big">Chờ → Đã xác nhận</div><div class="sub">hai bên cùng thấy</div></div></div>
+      </div>
+    </div>
+    <div class="legend"><span><span class="badge ai" style="background:#DCF0EF;color:#0E8C8A">✦ AI</span> AI hỗ trợ</span><span><span class="badge" style="background:#E6ECEE;color:#33454F">RULE</span> rule / scheduler</span><span><span class="badge" style="border:1px solid #33454F;color:#33454F">NGƯỜI</span> con người quyết định</span><span class="note">Minh họa rút gọn từ luồng thật</span></div>
+  </div>
+  <footer class="foot"><span>K3 là mục tiêu pilot, chưa đo · lời nhắc do rule theo lịch hãng + ODO, không phải AI dự đoán hỏng hóc</span><span class="pg">08 / 14</span></footer>
+  <aside class="notes">Đây là chỗ AI thật sự làm việc. Trước đây, mỗi bước là một cuộc gọi hoặc một lần hỏi lại. Với Vcare, lời nhắc do rule tạo theo lịch hãng và ODO, không phải AI đoán hỏng. AI hỗ trợ ba bước: giải thích kế hoạch có nguồn và dự toán, hiểu “ngày mai” là ngày nào theo thời điểm yêu cầu, và lọc xưởng có ca theo vị trí, sức chứa và thời lượng gói. Hai bước cuối luôn là con người: chủ xe xem lại và bấm gửi, cố vấn kiểm tra và xác nhận. Mục tiêu pilot là dưới 3 phút từ yêu cầu đến lúc gửi được lịch hợp lệ.</aside>
+</section>
+
+<!-- ============ SLIDE 9 — DEMO 1 ============ -->
+<section class="slide light s09" data-title="Demo: nhắc và kế hoạch">
+  <div class="pad">
+    <div class="kicker">09 · Demo 1/2 · nhắc → kế hoạch có căn cứ</div>
+    <h2 class="hl" style="font-size:52px">Còn <span class="num">100 km</span> tới mốc 30.000: Vcare nhắc và giải thích <span class="num">19 hạng mục</span> kèm dự toán trước khi chủ xe gọi ai</h2>
+    <div class="demo">
+      <div class="dcol frag" data-s="1">
+        <span class="lbl">① Nhận nhắc</span>
+        <div class="ph p1"><div class="sc"><div class="imw"><img src="assets/m01.png" alt="Thông báo nhắc bảo dưỡng"><span class="hi frag fade" data-s="1" style="top:11.3%;height:16.5%"></span></div></div></div>
+        <span class="callout">Nhắc theo ODO và thời gian</span>
+      </div>
+      <div class="arrow frag fade" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="dcol frag" data-s="2">
+        <span class="lbl">② Mở kế hoạch</span>
+        <div class="ph p2"><div class="sc"><div class="imw"><img src="assets/m03.png" alt="Kế hoạch mốc 30.000 km"><span class="hi frag fade" data-s="3" style="top:31.4%;height:8.5%"></span></div></div></div>
+        <span class="callout frag fade" data-s="3">Dự toán 1,14–2,85 triệu · 215 phút</span>
+      </div>
+      <div class="arrow frag fade" data-s="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="dcol frag" data-s="4">
+        <span class="lbl">③ Hỏi “vì sao”</span>
+        <div class="ph p3"><div class="sc"><div class="imw"><img src="assets/m04.png" alt="Trả lời có nguồn S1 S2"><span class="hi frag fade" data-s="5" style="top:66.4%;height:12.6%"></span></div></div></div>
+        <span class="callout frag fade" data-s="5">Trả lời có nguồn HDSD VF 8</span>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Ảnh chụp local 18/10/2026 · dữ liệu demo · thông báo ① mô phỏng · giá ước tính xưởng, không phải bảng giá hãng</span><span class="pg">09 / 14</span></footer>
+  <aside class="notes">Đây là màn hình thật, dữ liệu demo. Xe VF 8 Plus còn 100 km tới mốc 30.000. Minh nhận nhắc, mở ra là kế hoạch của mốc này: 19 hạng mục, một cần thay là lọc gió điều hòa, 18 kiểm tra, khoảng 215 phút, dự toán 1,14 đến 2,85 triệu. Minh hỏi tiếp “vì sao phải kiểm tra má phanh”, trợ lý trả lời bằng hướng dẫn sử dụng VF 8, đánh số nguồn, bấm vào là mở đúng chương. Không có căn cứ thì trợ lý nói chưa tìm thấy, không tự bịa.</aside>
+</section>
+
+<!-- ============ SLIDE 10 — DEMO 2 ============ -->
+<section class="slide light s10" data-title="Demo: gửi yêu cầu và xưởng xử lý">
+  <div class="pad">
+    <div class="kicker">10 · Demo 2/2 · gửi yêu cầu → xưởng xử lý</div>
+    <h2 class="hl" style="font-size:52px">Khách xem lại và gửi; <span class="num">cố vấn kiểm tra, xác nhận</span>; chủ xe theo dõi trạng thái</h2>
+    <div class="demo">
+      <div class="dcol frag" data-s="1">
+        <span class="lbl">① Chọn xưởng và ca</span>
+        <div class="ph p1"><div class="sc"><div class="imw"><img src="assets/m06.png" alt="Xưởng có ca phù hợp"><span class="hi frag fade" data-s="2" style="top:46.4%;height:13.0%"></span></div></div></div>
+        <span class="callout frag fade" data-s="2">Hiểu ngày theo thời điểm yêu cầu</span>
+        <span class="callout frag fade" data-s="2">Khoảng cách khi Maps có dữ liệu</span>
+      </div>
+      <div class="arrow frag fade" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="dcol frag" data-s="3">
+        <span class="lbl">② Xem lại và gửi</span>
+        <div class="ph p2"><div class="sc"><div class="imw"><img src="assets/m07.png" alt="Xem lại trước khi gửi"><span class="hi frag fade" data-s="4" style="top:41.0%;height:13.5%"></span></div></div></div>
+        <span class="callout frag fade" data-s="4">Khách tự bấm gửi</span>
+      </div>
+      <div class="arrow frag fade" data-s="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="dcol wide frag" data-s="5">
+        <span class="lbl">③ Cố vấn kiểm tra, xác nhận</span>
+        <div class="panel"><div class="bar"><i></i><i></i><i></i>&nbsp;Cổng xưởng · Gara Trâu Quỳ</div><img src="assets/a_drawer.png" alt="Chi tiết lịch phía cố vấn"></div>
+        <span class="callout">Xưởng thấy đủ: xe, ODO, giờ hẹn, nguồn phiếu</span>
+        <div class="sync"><span class="st wait">Chờ xác nhận</span><span class="bar"></span><span class="st ok">Đã xác nhận</span><span class="syn">→ hiện trên app chủ xe</span></div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Ảnh ①–② trên xe VF 5 Plus; ③ là lịch #492496 · xưởng mẫu · gợi ý chưa giữ chỗ</span><span class="pg">10 / 14</span></footer>
+  <aside class="notes">Từ kế hoạch, Minh nói nhu cầu bằng một câu. Vcare hiểu “ngày mai” theo thời điểm yêu cầu, lấy vị trí, và chỉ gợi ý xưởng còn ca đủ thời lượng gói; khoảng cách hiển thị khi Maps có dữ liệu. Minh xem lại một lần và tự bấm gửi; gợi ý chưa giữ chỗ, hệ thống kiểm tra lại sức chứa khi gửi. Phía xưởng, cố vấn mở lịch và thấy đủ thông tin: xe, ODO, giờ hẹn, nguồn phiếu, rồi xác nhận. Phía chủ xe, Minh thấy trạng thái chuyển sang đã xác nhận cùng tiến trình các bước. Hai phía cùng nhìn một lịch.</aside>
+</section>
+
+<!-- ============ SLIDE 11 — ARCHITECTURE ============ -->
+<section class="slide light s11" data-title="Kiến trúc & ranh giới AI">
+  <div class="pad">
+    <div class="kicker">11 · Kiến trúc &amp; ranh giới AI</div>
+    <h2 class="hl" style="font-size:52px">AI hiểu và giải thích; <span class="num">hệ thống kiểm tra giá, ca, quyền và trạng thái</span></h2>
+    <div class="arch">
+      <div class="tier frag" data-s="1"><div class="lbl">Dữ liệu</div><h3>Nguồn sự thật</h3><ul><li>Hồ sơ xe, ODO, lịch sử</li><li>Lịch bảo dưỡng hãng</li><li>HDSD VF 3 / 5 / 8</li><li>Sức chứa ca của xưởng</li></ul></div>
+      <div class="arrow frag fade" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="tier ai frag" data-s="2"><div class="lbl">AI agent</div><h3>Hiểu &amp; giải thích</h3><ul><li>Hiểu câu nói, ngày tương đối</li><li>Chọn dữ kiện, trả lời có nguồn</li><li>Gọi tool, không tự ghi dữ liệu</li></ul><div class="stack">LangGraph · Gemini Flash-Lite · RAG pgvector</div></div>
+      <div class="arrow frag fade" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="tier sys frag" data-s="3"><div class="lbl">Hệ thống kiểm tra</div><h3>Quyết định nghiệp vụ</h3><ul><li>Giá và dự toán</li><li>Ca còn sức chứa</li><li>Quyền theo vai trò</li><li>Trạng thái lịch</li></ul><div class="stack">FastAPI · PostgreSQL · khóa theo xưởng</div></div>
+      <div class="arrow frag fade" data-s="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="tier frag" data-s="4"><div class="lbl">Giao diện</div><h3>Hai vai trò</h3><ul><li>App chủ xe</li><li>Cổng xưởng</li></ul><div class="stack">Next.js</div></div>
+    </div>
+    <div class="layers frag" data-s="4">
+      <div class="lay-t">3 lớp chặn bịa thông tin</div>
+      <div class="lay"><span>1</span><div><b>Trích nguyên văn tài liệu</b><small>LLM chỉ chọn đoạn theo mã; trả lời kèm nguồn [S1]</small></div></div>
+      <div class="lay"><span>2</span><div><b>Không có căn cứ → báo “chưa tìm thấy”</b><small>không để LLM tự trả lời thay</small></div></div>
+      <div class="lay"><span>3</span><div><b>Giá, ca, trạng thái chỉ qua tool → service</b><small>AI không ghi trực tiếp vào dữ liệu</small></div></div>
+    </div>
+  </div>
+  <footer class="foot"><span>Chọn dữ kiện và OCR qua kiểm thử thành phần trên bộ tổng hợp nhỏ (15/10/2026); chưa phải độ chính xác chung</span><span class="pg">11 / 14</span></footer>
+  <aside class="notes">Về kỹ thuật, ranh giới rất rõ: AI hiểu và giải thích, hệ thống kiểm tra. AI agent trên LangGraph và Gemini Flash-Lite hiểu câu nói, ngày tương đối, chọn dữ kiện và trả lời bằng tài liệu có nguồn. Nhưng giá, ca còn sức chứa, quyền theo vai trò và trạng thái lịch đều do backend FastAPI và PostgreSQL quyết định, trong giao dịch có khóa theo xưởng. AI chỉ gọi tool, không tự ghi dữ liệu. Với câu hỏi kỹ thuật, LLM chỉ chọn đoạn tài liệu theo mã và câu trả lời là trích nguyên văn có nguồn; không có căn cứ thì hệ thống báo chưa tìm thấy. Chúng em không nói AI không thể sai: nó vẫn có thể chọn nhầm đoạn, nên pilot sẽ đo lại trên câu hỏi thật.</aside>
+</section>
+
+<!-- ============ SLIDE 12 — GTM ============ -->
+<section class="slide light s12" data-title="GTM & mô hình kinh doanh">
+  <div class="pad">
+    <div class="kicker">12 · GTM &amp; mô hình kinh doanh</div>
+    <h2 class="hl" style="font-size:52px">Giá đề xuất <span class="num">399.000đ/xưởng/tháng</span>, chủ xe dùng miễn phí; mỗi xưởng đưa app đến khách của chính mình</h2>
+    <div class="gtm">
+      <div class="money">
+        <div class="lbl">Mô hình B2B2C · dòng tiền</div>
+        <p class="b2b" style="margin-bottom:34px">Bán cho <b>xưởng (B2B)</b>, xưởng mời <b>chủ xe</b> dùng app <b>(B2C)</b></p>
+        <div class="mrow"><span class="node ws">Xưởng</span><span class="flowline"><span>thuê bao</span></span><span class="node vc">Vcare</span></div>
+        <div class="mrow"><span class="node">Chủ xe</span><span class="flowline muted"><span>tiền sửa xe (tách riêng phí phần mềm)</span></span><span class="node ws">Xưởng</span></div>
+        <div class="valbox"><div class="vb-k">Ví dụ giá trị cho xưởng</div><div class="vb-m">60 yêu cầu × bớt 8 phút = <b>8 giờ công ≈ 600 nghìn/tháng</b></div><div class="vb-s">Phép tính minh họa · giá được kiểm chứng trong pilot (≥ 1 xưởng đồng ý ký)</div></div>
+      </div>
+      <div class="prices">
+        <div class="price main auto d1"><div class="name">Cơ bản</div><div class="amt">399.000đ <small>/ xưởng / tháng</small></div><div class="inc">Đặt lịch, hồ sơ xe, kế hoạch, trợ lý, dashboard · trả năm 3,99 triệu</div></div>
+        <div class="price auto d2"><div class="name">Nâng cao</div><div class="amt">699.000đ <small>/ xưởng / tháng</small></div><div class="inc">Thêm CSKH, nhắc nâng cao, báo cáo · trả năm 6,99 triệu</div></div>
+        <div class="money chanbox auto d3">
+        <div class="lbl">Kênh bán</div>
+        <div class="chan">
+          <div><span>1</span>Bán trực tiếp xưởng Hà Nội</div>
+          <div><span>2</span>Chuỗi / đối tác dịch vụ trong hệ sinh thái (đề xuất làm việc với VinFast Service, mạng xưởng đối tác GSM)</div>
+          <div><span>3</span>QR tại quầy xưởng để chủ xe cài app</div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span>Giá đề xuất của nhóm, chưa gồm VAT, chưa có doanh thu · chưa có đối tác xác nhận, không gắn logo VinFast/GSM</span><span class="pg">12 / 14</span></footer>
+  <aside class="notes">Người trả tiền là xưởng. Giá đề xuất cho gói cơ bản là 399 nghìn một tháng, chưa gồm VAT, kèm hạn mức lượt AI và OCR theo gói; đổi lại xưởng có app đặt lịch cho khách của mình, hồ sơ xe, kế hoạch, trợ lý và dashboard. Chủ xe dùng miễn phí. Tiền sửa xe vẫn trả thẳng cho xưởng, tách riêng phí phần mềm, chúng em không lấy hoa hồng. Ví dụ minh họa: 60 yêu cầu một tháng, mỗi yêu cầu bớt 8 phút tư vấn là 8 giờ công, khoảng 600 nghìn. Kênh đầu tiên là bán trực tiếp ở Hà Nội; tiếp theo, chúng em mong làm việc với mạng xưởng trong hệ sinh thái. Đây là đề xuất, chưa có đối tác xác nhận.</aside>
+</section>
+
+<!-- ============ SLIDE 13 — ROADMAP ============ -->
+<section class="slide light s13" data-title="Lộ trình 3 giai đoạn">
+  <div class="pad">
+    <div class="kicker">13 · Lộ trình</div>
+    <h2 class="hl" style="font-size:52px"><span class="num">4 tuần</span> pilot với 1–2 xưởng để đo hiệu quả thật, rồi mới mở rộng bán</h2>
+    <div class="road">
+      <div class="track"></div>
+      <div class="phase p1 auto d1"><span class="dot">1</span>
+        <div class="card"><div class="pn">Giai đoạn 1 · Pilot</div><h3>4 tuần</h3><div class="when">1–2 xưởng · 20–30 chủ xe</div>
+          <div class="kpi">Nhắc → mở kế hoạch ≥ 35%</div>
+          <div class="kpi">Từ yêu cầu đến gửi lịch ≤ 3 phút</div>
+          <div class="kpi">Xưởng trả lời trong 1 giờ ≥ 80%</div>
+          <div class="kpi">≥ 1 xưởng đồng ý ký</div></div></div>
+      <div class="phase auto d2"><span class="dot">2</span>
+        <div class="card"><div class="pn">Giai đoạn 2 · Mở rộng</div><h3>Tháng 3–9</h3><div class="when">Hà Nội</div>
+          <div class="kpi">10 xưởng trả phí <span class="rev">≈ 4 triệu đ/tháng</span></div>
+          <div class="kpi">1.500 chủ xe hoạt động</div>
+          <div class="kpi">Lịch không thành ≤ 10%</div></div></div>
+      <div class="phase auto d3"><span class="dot">3</span>
+        <div class="card"><div class="pn">Giai đoạn 3 · Scale</div><h3>Năm 2–3</h3><div class="when">Đa dòng xe / đối tác</div>
+          <div class="kpi">60 xưởng (SOM) <span class="rev">≈ 395 triệu đ/năm</span></div>
+          <div class="kpi">Giữ chân xưởng ≥ 85%</div>
+          <div class="kpi">Mở rộng dòng xe, đối tác</div></div></div>
+    </div>
+    <div class="next auto d4"><b>CẦN ĐỂ BẮT ĐẦU</b><span>1–2 xưởng pilot tại Hà Nội</span><span>Dữ liệu được phép sử dụng</span><span>Mentor thương mại hóa</span></div>
+  </div>
+  <footer class="foot"><span>KPI là mục tiêu, chưa đo · tuần 1 của pilot đo hiện trạng để so sánh</span><span class="pg">13 / 14</span></footer>
+  <aside class="notes">Bước tiếp theo không phải mở rộng ngay, mà là pilot bốn tuần với một đến hai xưởng và 20 đến 30 chủ xe. Tuần một đo hiện trạng, tuần hai và ba dùng có giám sát, tuần bốn so sánh. Thành công nghĩa là: từ yêu cầu đến gửi lịch dưới 3 phút, xưởng trả lời trong một giờ trên 80%, và ít nhất một xưởng đồng ý trả phí. Sau đó mới mở 10 xưởng ở Hà Nội và hướng tới 60 xưởng trong ba năm. Để bắt đầu, chúng em cần xưởng pilot, dữ liệu được phép sử dụng và một mentor thương mại hóa.</aside>
+</section>
+
+<!-- ============ SLIDE 14 — CẢM ƠN ============ -->
+<section class="slide dark s14" data-title="Cảm ơn">
+  <div class="glow"></div>
+  <div class="floor"></div>
+  <img class="mascot" id="mascot" src="assets/mascot/wave/000.webp" data-frames="97" data-base="assets/mascot/wave/" alt="Trợ lý Vcare vẫy tay">
+  <div class="say auto d3">Mời bạn trải nghiệm Vcare!</div>
+  <div class="pad">
+    <div class="brand2 auto"><img src="assets/logo-round.png" alt=""><span>V<b>care</b></span></div>
+    <div class="thanks auto d1">Cảm ơn<br><em>hội đồng!</em></div>
+    <div class="tag auto d2">Nhắc đúng mốc, tìm đúng ca, <em>bắt đầu bằng một câu nói.</em></div>
+    <div class="try auto d3"><img src="assets/qr-vcare.png" alt="Mã QR tới vcare-landing.vercel.app"><div><b>Quét mã để trải nghiệm</b><span>vcare-landing.vercel.app</span><small>Nhóm P-100 · sẵn sàng nhận câu hỏi</small></div></div>
+  </div>
+  <footer class="foot"><span class="links">vcare-landing.vercel.app · github.com/AI20K-Build-Phase-Cohort-4/P-100</span><span class="pg">14 / 14</span></footer>
+  <aside class="notes">Vcare: nhắc đúng mốc, tìm đúng ca, bắt đầu bằng một câu nói. Mời hội đồng quét mã trên màn hình để trải nghiệm Vcare. Cảm ơn hội đồng đã lắng nghe, chúng em sẵn sàng nhận câu hỏi.</aside>
+</section>
+
+</main>
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="notes-overlay" id="notesOverlay"><div class="meta" id="notesMeta"></div><div id="notesText"></div></div>
+<div class="help" id="help">← → / Space: bước · P: presenter · N: notes · F: toàn màn hình · E: sửa chữ</div>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Sửa chữ (E)">✎ Sửa chữ</button>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   - Mỗi slide có các bước: phần tử [data-s=n] hiện khi bước >= n
+   - Lớp s1..sN và data-step trên slide điều khiển zoom / làm mờ
+   - goToSlide(i) hiển thị trạng thái cuối (dùng cho export PDF)
+   =========================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.stage = document.getElementById('deckStage');
+    this.idx = 0; this.step = 0; this.t0 = Date.now(); this.presenter = null;
+    this.maxSteps = this.slides.map(s => Math.max(0, ...[...s.querySelectorAll('[data-s]')].map(e => +e.dataset.s)));
+    this.setupStageScale(); this.setupNav();
+    const h = parseInt(location.hash.slice(1), 10);
+    this.render(isNaN(h) ? 0 : Math.min(h - 1, this.slides.length - 1), 0, false);
+  }
+  setupStageScale() {
+    const scale = () => {
+      const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      const x = (window.innerWidth - 1920 * f) / 2, y = (window.innerHeight - 1080 * f) / 2;
+      this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+    };
+    scale(); window.addEventListener('resize', scale);
+  }
+  setupNav() {
+    document.addEventListener('keydown', e => this.onKey(e));
+    this.stage.addEventListener('click', e => { if (!editor.isActive && !e.target.closest('a')) this.next(); });
+    let x0 = null;
+    document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) (dx < 0 ? this.next() : this.prev()); x0 = null; });
+    let wheelLock = false;
+    document.addEventListener('wheel', e => { if (wheelLock || editor.isActive) return; wheelLock = true; setTimeout(() => wheelLock = false, 600); e.deltaY > 0 ? this.next() : this.prev(); }, { passive: true });
+  }
+  onKey(e) {
+    if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(k)) { e.preventDefault(); this.next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); this.prev(); }
+    else if (k === 'Home') this.render(0, 0); else if (k === 'End') this.goToSlide(this.slides.length - 1);
+    else if (k === 'p' || k === 'P') this.openPresenter();
+    else if (k === 'n' || k === 'N') document.getElementById('notesOverlay').classList.toggle('show');
+    else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+    else if (k === '?' || k === 'h') document.getElementById('help').classList.toggle('show');
+  }
+  next() { if (this.step < this.maxSteps[this.idx]) this.render(this.idx, this.step + 1); else if (this.idx < this.slides.length - 1) this.render(this.idx + 1, 0); }
+  prev() { if (this.step > 0) this.render(this.idx, this.step - 1); else if (this.idx > 0) this.render(this.idx - 1, this.maxSteps[this.idx - 1], true); }
+  /* Trạng thái cuối của slide, không chạy hiệu ứng (export PDF / phím End) */
+  goToSlide(i) { this.render(i, this.maxSteps[i], true); }
+  render(i, step, instant = false) {
+    const changed = i !== this.idx || !this.slides[i].classList.contains('active');
+    this.idx = i; this.step = step;
+    if (instant) this.stage.classList.add('no-anim');
+    this.slides.forEach((s, j) => { s.classList.toggle('active', j === i); s.classList.toggle('visible', j === i); });
+    const s = this.slides[i];
+    for (let n = 1; n <= 9; n++) s.classList.toggle('s' + n, n <= step);
+    s.dataset.step = step;
+    s.classList.toggle('final', instant);
+    s.querySelectorAll('[data-s]').forEach(el => {
+      const was = el.classList.contains('on'), on = +el.dataset.s <= step;
+      el.classList.toggle('on', on);
+      if (on && !was) el.querySelectorAll('.count').forEach(c => this.countUp(c, instant));
+      if (el.classList.contains('count') && on && !was) this.countUp(el, instant);
+    });
+    if (changed || instant) this.onEnter(s, instant);
+    if (instant) { void this.stage.offsetWidth; setTimeout(() => this.stage.classList.remove('no-anim'), 60); }
+    history.replaceState(null, '', '#' + (i + 1));
+    document.getElementById('progress').style.width = ((i + 1) / this.slides.length * 100) + '%';
+    this.updateNotes();
+  }
+  /* Hiệu ứng khi vào slide: gõ chữ slide 1 */
+  onEnter(s, instant) {
+    /* Trợ lý Vcare vẫy tay ở slide cảm ơn (chuỗi khung hình của app) */
+    clearInterval(this.mascotT);
+    const m = s.querySelector('#mascot');
+    if (m) {
+      const n = +m.dataset.frames, base = m.dataset.base, src = k => base + String(k).padStart(3, '0') + '.webp';
+      if (!this.mascotPre) { this.mascotPre = [...Array(n)].map((_, k) => { const im = new Image(); im.src = src(k); return im; }); }
+      if (instant) m.src = src(0);
+      else { let f = 0; this.mascotT = setInterval(() => { f = (f + 1) % n; m.src = src(f); }, 1000 / 24); }
+    }
+    const b = s.querySelector('#typeBubble');
+    if (b) {
+      const tx = b.querySelector('.tx'), full = b.dataset.text; clearInterval(this.typer);
+      if (instant) { tx.textContent = full; return; }
+      tx.textContent = ''; let n = 0;
+      setTimeout(() => { this.typer = setInterval(() => { tx.textContent = full.slice(0, ++n); if (n >= full.length) clearInterval(this.typer); }, 38); }, 500);
+    }
+  }
+  countUp(el, instant) {
+    const to = parseFloat(el.dataset.to), dec = +(el.dataset.dec || 0), suf = el.dataset.suffix || '';
+    const fmt = v => v.toFixed(dec).replace('.', ',') + suf;
+    if (instant) { el.textContent = fmt(to); return; }
+    const t0 = performance.now(), d = 900;
+    const tick = t => { const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(to * e); if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+  notesOf(i) { const a = this.slides[i].querySelector('.notes'); return a ? a.textContent.trim() : ''; }
+  updateNotes() {
+    const s = this.slides[this.idx];
+    const meta = `Slide ${this.idx + 1}/${this.slides.length} · ${s.dataset.title} · bước ${this.step}/${this.maxSteps[this.idx]}`;
+    document.getElementById('notesMeta').textContent = meta;
+    document.getElementById('notesText').textContent = this.notesOf(this.idx);
+    if (this.presenter && !this.presenter.closed) {
+      const d = this.presenter.document, nx = this.slides[this.idx + 1];
+      d.getElementById('m').textContent = meta;
+      d.getElementById('t').textContent = this.notesOf(this.idx);
+      d.getElementById('nx').textContent = nx ? 'Tiếp: ' + nx.dataset.title : 'Hết deck';
+    }
+  }
+  /* Presenter mode: cửa sổ riêng có notes, slide tiếp theo, đồng hồ */
+  openPresenter() {
+    if (this.presenter && !this.presenter.closed) { this.presenter.focus(); return; }
+    const w = window.open('', 'vcare-presenter', 'width=980,height=720');
+    if (!w) { document.getElementById('notesOverlay').classList.add('show'); return; }
+    w.document.write(`<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>Presenter — Vcare</title>
+      <style>body{margin:0;font:22px/1.55 'Be Vietnam Pro',system-ui,sans-serif;background:#0B1D26;color:#EAF2F3;padding:28px 34px}
+      #top{display:flex;justify-content:space-between;font:16px 'JetBrains Mono',monospace;color:#2BB5AE}
+      #clock{font-size:34px;color:#fff}#t{margin-top:18px;font-size:26px;white-space:pre-wrap}#nx{margin-top:24px;color:#8FA3AB;font-size:18px}
+      .k{margin-top:26px;font:14px monospace;color:#8FA3AB}</style></head>
+      <body><div id="top"><span id="m"></span><span id="clock">00:00</span></div><div id="t"></div><div id="nx"></div>
+      <div class="k">← → / Space điều khiển deck · R: đặt lại đồng hồ</div></body></html>`);
+    w.document.close();
+    w.document.addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') { this.t0 = Date.now(); return; } this.onKey(e); });
+    setInterval(() => { if (w.closed) return; const s = Math.floor((Date.now() - this.t0) / 1000); w.document.getElementById('clock').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }, 1000);
+    this.presenter = w; this.updateNotes();
+  }
+}
+
+/* ===========================================
+   INLINE EDITING (E hoặc góc trên trái; Ctrl+S lưu file HTML)
+   =========================================== */
+const editor = {
+  isActive: false,
+  targets() { return document.querySelectorAll('.slide h1, .slide h2, .slide h3, .slide p, .slide .cap, .slide .callout, .slide .n, .slide .kpi, .slide .foot span:first-child, .slide .jtbd > div, .slide td, .slide small, .slide b'); },
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    this.targets().forEach(el => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+    document.getElementById('editToggle').classList.toggle('active', this.isActive);
+  },
+  save() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML.replace(/ contenteditable="(true|false)"/g, '');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = 'Vcare-pitch.html'; a.click();
+  }
+};
+(() => {
+  const hot = document.querySelector('.edit-hotzone'), btn = document.getElementById('editToggle'); let hide = null;
+  btn.addEventListener('click', () => editor.toggleEditMode());
+  hot.addEventListener('click', () => editor.toggleEditMode());
+  hot.addEventListener('mouseenter', () => { clearTimeout(hide); btn.classList.add('show'); });
+  hot.addEventListener('mouseleave', () => { hide = setTimeout(() => { if (!editor.isActive) btn.classList.remove('show'); }, 400); });
+  btn.addEventListener('mouseenter', () => clearTimeout(hide));
+  btn.addEventListener('mouseleave', () => { hide = setTimeout(() => { if (!editor.isActive) btn.classList.remove('show'); }, 400); });
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') editor.toggleEditMode();
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); editor.save(); }
+  });
+})();
+
+window.presentation = new SlidePresentation();
+</script>
+</body>
+</html>

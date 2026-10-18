@@ -2,9 +2,10 @@
 
 Bộ slide pitch Vcare (nhóm P-100, Dự án AI thực chiến · VinUni Build 2026), dạng HTML tĩnh, một file, chạy trực tiếp trên trình duyệt.
 
-- `index.html`: bản trình chiếu chính (14 slide, có hiệu ứng, speaker notes).
+- `index.html`: bản trình chiếu chính (16 slide, có hiệu ứng, speaker notes).
 - `assets/`: ảnh giao diện, logo, mã QR, khung hình trợ lý Vcare.
 - `Vcare-pitch.pdf`: bản PDF tĩnh, mỗi slide một trang.
+- `Vcare-pitch.pptx`: bản PowerPoint, mỗi slide là ảnh 1920×1080 kèm speaker notes (không sửa chữ trực tiếp được; sửa ở `index.html` rồi xuất lại).
 - `.nojekyll`: để GitHub Pages phục vụ nguyên trạng, không qua Jekyll.
 
 ## Trình chiếu
@@ -18,7 +19,7 @@ Bộ slide pitch Vcare (nhóm P-100, Dự án AI thực chiến · VinUni Build 
 | N | hiện notes dưới slide |
 | Home / End | slide đầu / cuối |
 
-Thêm `#9` vào cuối URL để mở thẳng slide 9. Font tải từ Google Fonts nên máy cần có mạng.
+Thêm `#9` vào cuối URL để mở thẳng slide 9; `?final#9` mở slide 9 ở trạng thái cuối, không hiệu ứng (dùng để chụp ảnh, xuất PDF/PPTX). Font tải từ Google Fonts nên máy cần có mạng.
 
 ## Deploy lên GitHub Pages
 

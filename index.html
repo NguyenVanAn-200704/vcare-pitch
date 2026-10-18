@@ -129,17 +129,27 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .s01 .brand img { width: 96px; height: 96px; }
 .s01 .brand span { font-size: 64px; font-weight: 800; letter-spacing: -0.02em; }
 .s01 .brand span b { color: var(--accent-2); font-weight: 800; }
-.s01 h1 { font-size: 80px; line-height: 1.08; font-weight: 800; letter-spacing: -0.025em; margin-top: 64px; max-width: 1000px; }
+.s01 .hook { margin-top: 64px; max-width: 1040px; }
+.s01 .hook .stat { display: flex; align-items: center; gap: 28px; }
+.s01 .hook .stat b { font-size: 132px; line-height: .95; font-weight: 800; letter-spacing: -0.04em; background: linear-gradient(120deg, #6FE3D8 0%, var(--accent-2) 55%, #1C9C96 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.s01 .hook .stat span { font-size: 30px; line-height: 1.3; color: var(--dark-text); border-left: 3px solid rgba(43,181,174,.5); padding-left: 24px; }
+.s01 .hook .stat i { font-style: normal; font-family: var(--mono); font-size: 16px; color: var(--dark-muted); vertical-align: 4px; }
+.s01 .hook p { margin-top: 26px; font-size: 34px; line-height: 1.35; color: var(--dark-text); text-wrap: balance; }
+.s01 .hook em { font-style: normal; color: #fff; font-weight: 700; box-shadow: inset 0 -12px 0 rgba(43,181,174,.35); }
+.s01 h1 { font-size: 60px; line-height: 1.12; font-weight: 800; letter-spacing: -0.025em; margin-top: 56px; max-width: 1000px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,.12); }
 .s01 h1 em { font-style: normal; color: var(--accent-2); }
-.s01 .tagline { font-size: 32px; line-height: 1.4; color: var(--dark-text); opacity: .86; margin-top: 36px; max-width: 1080px; }
-.s01 .meta { position: absolute; left: 96px; bottom: 96px; font-family: var(--mono); font-size: 20px; color: var(--dark-muted); letter-spacing: .02em; }
+.s01 .tagline { font-size: 27px; line-height: 1.4; color: var(--dark-text); opacity: .8; margin-top: 22px; max-width: 1000px; }
+.s01 .meta { position: absolute; left: 96px; bottom: 64px; font-family: var(--mono); font-size: 20px; color: var(--dark-muted); letter-spacing: .02em; display: flex; flex-direction: column; gap: 10px; }
 .s01 .meta b { color: var(--dark-text); font-weight: 700; }
+.s01 .meta span { font-size: 15px; opacity: .8; }
+.s01 .glow1 { position: absolute; right: 60px; top: 120px; width: 760px; height: 760px; border-radius: 50%; background: radial-gradient(circle, rgba(43,181,174,.28) 0%, rgba(43,181,174,0) 62%); pointer-events: none; z-index: 0; }
+.s01 .phone, .s01 .bubble { z-index: 1; }
 .s01 .route { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
 .phone { position: absolute; right: 190px; top: 70px; width: 440px; height: 940px; border-radius: 58px; background: #050E13; padding: 18px; box-shadow: 0 40px 90px rgba(0,0,0,.45), 0 0 0 2px rgba(255,255,255,.08) inset; }
 .phone .screen { width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #EEF6F8; position: relative; }
 .phone .screen img { width: 100%; height: auto; max-width: none; max-height: none; display: block; transform: translateY(70px); opacity: 0; transition: transform 1s var(--ease) 1.9s, opacity .8s ease 1.9s; }
 .slide.visible .phone .screen img { transform: none; opacity: 1; }
-.bubble { position: absolute; right: 560px; top: 740px; background: var(--accent); color: #fff; font-size: 30px; font-weight: 600; line-height: 1.3; padding: 22px 28px; border-radius: 26px 26px 6px 26px; width: 440px; min-height: 120px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.bubble { position: absolute; right: 650px; top: 800px; background: var(--accent); color: #fff; font-size: 30px; font-weight: 600; line-height: 1.3; padding: 22px 28px; border-radius: 26px 26px 6px 26px; width: 440px; min-height: 120px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
 .bubble .caret { display: inline-block; width: 3px; height: 1.1em; background: #fff; vertical-align: -4px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .s01 .demo-note { position: absolute; right: 190px; bottom: 30px; width: 440px; text-align: center; font-family: var(--mono); font-size: 15px; color: var(--dark-muted); }
@@ -434,6 +444,164 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
 .s14 .brand2 span { font-size: 46px; font-weight: 800; }
 .s14 .brand2 span b { color: var(--accent-2); }
 .links { font-family: var(--mono); font-size: 18px; color: var(--dark-muted); }
+
+/* ===========================================
+   B2B — chuỗi xưởng (slide 5, 8, 10, 11, 13)
+   =========================================== */
+.loss { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 46px; }
+.lossc { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 34px 34px 30px; display: flex; flex-direction: column; min-height: 400px; }
+.lossc .ic { width: 88px; height: 88px; border-radius: 22px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.lossc .ic svg { width: 48px; height: 48px; }
+.lossc h3 { font-size: 38px; line-height: 1.2; margin-top: 28px; }
+.lossc p { font-size: 26px; line-height: 1.4; color: var(--ink-2); margin-top: 14px; }
+.lossc .tag { margin-top: auto; padding-top: 22px; font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent); }
+.who { margin-top: 34px; display: flex; align-items: center; gap: 18px; background: var(--ink); color: #fff; border-radius: 18px; padding: 20px 28px; font-size: 25px; }
+.who b { font-family: var(--mono); font-size: 17px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-2); }
+.who span { margin-right: 26px; }
+.loopw { display: flex; gap: 50px; margin-top: 30px; align-items: center; }
+.loop { position: relative; width: 700px; height: 660px; flex: none; }
+.loop .loopring { position: absolute; left: 0; top: 0; width: 700px; height: 660px; max-width: none; max-height: none; }
+.loop .ringp { transition: stroke-dashoffset 1.6s var(--ease); }
+.s08b.s1 .ringp { stroke-dashoffset: 1382; } .s08b.s2 .ringp { stroke-dashoffset: 1037; } .s08b.s3 .ringp { stroke-dashoffset: 691; }
+.s08b.s4 .ringp { stroke-dashoffset: 346; } .s08b.s5 .ringp { stroke-dashoffset: 0; }
+.slide.final .ringp { stroke-dashoffset: 0 !important; }
+.loop .core { position: absolute; left: 230px; top: 230px; width: 240px; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.loop .core img { width: 88px; height: 88px; max-width: none; max-height: none; }
+.loop .core b { font-size: 40px; font-weight: 800; margin-top: 8px; }
+.loop .core small { font-size: 19px; color: var(--ink-2); }
+.ln { position: absolute; width: 250px; background: var(--card); border: 2px solid var(--accent); border-radius: 18px; padding: 14px 18px 14px 62px; box-shadow: 0 12px 30px rgba(11,29,38,.10); }
+.ln span { position: absolute; left: 14px; top: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
+.ln b { display: block; font-size: 23px; line-height: 1.2; }
+.ln small { display: block; font-size: 18px; color: var(--ink-2); margin-top: 4px; line-height: 1.3; }
+.vcol { flex: 1; display: flex; flex-direction: column; gap: 22px; }
+.vbox { background: var(--ink); color: #fff; border-radius: 22px; padding: 26px 30px; }
+.vbox .lbl { color: var(--accent-2); margin-bottom: 12px; }
+.vbox ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.vbox li { font-size: 27px; line-height: 1.3; display: flex; gap: 12px; }
+.vbox li::before { content: "✓"; color: var(--accent-2); font-weight: 800; }
+.vbox li b { color: var(--accent-2); }
+.vbox.alt { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+.vbox.alt .lbl { color: var(--accent); } .vbox.alt li::before { color: var(--accent); }
+.vbox.alt li { font-size: 24px; color: var(--ink-2); }
+.s10b .demo.three { justify-content: center; gap: 30px; margin-top: 34px; }
+.s10b .ph { width: 330px; } .s10b .ph .sc { height: 580px; }
+.s10b .dcol { width: 420px; }
+.s10b .dcol .callout { font-size: 23px; }
+.wsrows { display: flex; flex-direction: column; gap: 22px; margin-top: 34px; }
+.wsr { display: grid; grid-template-columns: 360px 1fr; gap: 26px; align-items: center; }
+.wsl { position: relative; padding-left: 64px; }
+.wsl span { position: absolute; left: 0; top: 2px; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px; }
+.wsl b { display: block; font-size: 32px; line-height: 1.15; }
+.wsl small { display: block; font-size: 21px; color: var(--ink-2); margin-top: 6px; line-height: 1.35; }
+.wsi { background: #EEF1F2; border: 1px solid var(--line); border-radius: 16px; padding: 10px; box-shadow: 0 14px 34px rgba(11,29,38,.10); }
+.wsi img { display: block; width: 100%; height: auto; max-width: none; max-height: none; border-radius: 10px; }
+.gtm2 { display: grid; grid-template-columns: 1fr 760px; gap: 46px; margin-top: 40px; align-items: start; }
+.motion { display: flex; flex-direction: column; gap: 18px; }
+.mstep { display: flex; gap: 20px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 26px; }
+.mstep > span { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px; flex: none; }
+.mstep b { display: block; font-size: 30px; line-height: 1.2; }
+.mstep small { display: block; font-size: 22px; color: var(--ink-2); margin-top: 6px; }
+.flowmini { background: var(--accent-soft); border-radius: 18px; padding: 18px 24px; font-size: 21px; line-height: 1.45; color: var(--ink-2); }
+.flowmini b { display: block; font-family: var(--mono); font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.plans { display: flex; flex-direction: column; gap: 16px; }
+.plans .price .amt { font-size: 52px; }
+
+/* ===========================================
+   SLIDE 15 — ĐỘI NGŨ + ASK
+   =========================================== */
+.team2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 44px; }
+.tm { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 34px 30px; display: flex; flex-direction: column; align-items: flex-start; min-height: 400px; }
+.tm .av { width: 104px; height: 104px; border-radius: 50%; background: var(--ink); color: var(--accent-2); display: grid; place-items: center; font-size: 28px; font-weight: 800; }
+.tm b { font-size: 32px; margin-top: 26px; line-height: 1.2; }
+.tm .role { font-family: var(--mono); font-size: 19px; font-weight: 700; color: var(--accent); margin-top: 8px; letter-spacing: .02em; }
+.tm small { font-size: 25px; color: var(--ink-2); line-height: 1.4; margin-top: 12px; }
+.asks2 { display: grid; grid-template-columns: 220px 1fr 1fr 1fr; gap: 18px; margin-top: 40px; }
+.asklbl { background: var(--ink); color: #fff; border-radius: 18px; padding: 20px 24px; font-size: 28px; font-weight: 800; line-height: 1.2; display: flex; align-items: center; }
+.ask2 { display: flex; gap: 16px; align-items: flex-start; background: var(--accent-soft); border: 1.5px solid var(--accent); border-radius: 18px; padding: 26px 24px; }
+.ask2 > span { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; flex: none; }
+.ask2 b { display: block; font-size: 29px; line-height: 1.2; }
+.ask2 small { display: block; font-size: 22px; color: var(--ink-2); margin-top: 6px; line-height: 1.35; }
+
+/* ===========================================
+   POLISH — lớp hoàn thiện chung cho toàn deck
+   =========================================== */
+/* Chữ: cân dòng tiêu đề, tránh một chữ lẻ ở dòng cuối */
+.hl { text-wrap: pretty; }
+h1, h3, .cap, .callout, .tag, .s14 .tag, .ln b, .wsl b, .mstep b, .ask2 b, .lossc h3, .pain h3, .job h4, .tier h3, .layers .lay b { text-wrap: balance; }
+p, small, li, .sub2, .inc, .kpi { text-wrap: pretty; }
+/* Kicker: gạch nhấn đầu dòng, đồng bộ mọi slide */
+.kicker { display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; width: 34px; height: 4px; border-radius: 2px; background: currentColor; flex: none; }
+/* Nhãn nhỏ dùng chung (trước đây chưa có style gốc) */
+.lbl { font-family: var(--mono); font-size: 16px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.dark .lbl, .tier.ai .lbl, .method .lbl, .vbox .lbl { color: var(--accent-2); }
+.dcol .lbl { font-size: 18px; color: var(--ink-2); }
+/* Thẻ: bóng mềm, cùng một hệ */
+.pain, .lossc, .job, .scene, .tm, .phase .card, .price, .mstep, .tier, .val, .test, .layers .lay, .wsi, .money { box-shadow: 0 1px 2px rgba(11,29,38,.04), 0 10px 28px rgba(11,29,38,.06); }
+.tier.ai, .method { box-shadow: 0 18px 40px rgba(11,29,38,.22); }
+/* Chân trang: vạch mảnh tách nội dung, tăng tương phản chữ nguồn */
+:root { --muted: #5E6E77; }
+.foot { padding-top: 14px; border-top: 1px solid var(--line); }
+.dark .foot { border-top-color: rgba(255,255,255,.1); }
+.foot .pg { color: var(--ink-2); font-weight: 700; }
+.dark .foot .pg { color: var(--dark-text); }
+/* Điểm nhấn số liệu trong tiêu đề */
+.hl .num { background: linear-gradient(transparent 72%, rgba(14,140,138,.14) 72%); }
+
+/* Lấp khoảng trống dọc: nội dung giãn đều chiều cao slide */
+.s04 .disc { margin-top: auto; }
+.s04 .pain { min-height: 470px; }
+.s04 .pain h3 { font-size: 42px; }
+.s04 .pain p { font-size: 27px; }
+.s04 .pain .ic { width: 96px; height: 96px; margin: 34px 0 28px; }
+.s04 .pain .ic svg { width: 52px; height: 52px; }
+.s04 .method { justify-content: center; }
+.s04 .method .big { font-size: 34px; white-space: nowrap; }
+.s04 .punch { margin-top: 36px; margin-bottom: auto; background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 18px; padding: 22px 28px; font-size: 30px; }
+.s05b .loss { margin-top: auto; }
+.s05b .lossc { min-height: 440px; }
+.s05b .lossc h3 { font-size: 40px; }
+.s05b .who { margin-top: 36px; margin-bottom: auto; padding: 26px 32px; font-size: 27px; }
+html.capture .progress { display: none; }
+.s13b .gtm2 { margin-top: auto; margin-bottom: auto; padding-top: 20px; }
+.s13b .mstep { padding: 26px 30px; }
+.s13b .flowmini { padding: 24px 28px; font-size: 23px; }
+.s13 .road { margin-top: auto; margin-bottom: auto; padding-top: 10px; align-items: stretch; }
+.s13 .phase { display: flex; flex-direction: column; }
+.s13 .phase .card { flex: 1; }
+.s13 .kpi { padding: 16px 0; font-size: 25px; }
+.s13 .phase h3 { font-size: 46px; }
+.s15t .team2 { margin-top: auto; }
+.s15t .tm { min-height: 390px; position: relative; overflow: hidden; }
+.s15t .tm::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--accent); opacity: .85; }
+.s15t .tm .av { background: linear-gradient(140deg, #123441, var(--ink)); box-shadow: 0 0 0 6px var(--accent-soft); font-size: 32px; }
+.s15t .asks2 { margin-top: 36px; margin-bottom: auto; }
+.s15t .ask2 { background: var(--card); box-shadow: 0 10px 28px rgba(14,140,138,.10); }
+.s05 .jgrid { flex: 1; align-content: space-between; }
+/* Slide 9: thẻ mini gọn hơn */
+.s08 .mini { min-height: 250px; }
+/* Slide 10: callout không chạm chân trang */
+.s10b .ph .sc { height: 540px; }
+.s10b .dcol .callout { font-size: 22px; }
+/* Slide 8: nút vòng lặp rộng hơn để chữ không gãy */
+.s08b .ln b { font-size: 24px; }
+/* Slide cảm ơn */
+.s14 .tag { max-width: 980px; }
+
+/* ===========================================
+   CHROME TRÌNH CHIẾU: progress, notes, help, sửa chữ
+   =========================================== */
+.progress { position: fixed; left: 0; top: 0; height: 4px; width: 0; background: var(--accent-2); z-index: 1001; transition: width .4s var(--ease); }
+.notes-overlay { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(1100px, 92vw); max-height: 38vh; overflow: auto; background: rgba(11,29,38,.94); color: #EAF2F3; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 18px 24px; font: 18px/1.55 var(--font); z-index: 1002; display: none; }
+.notes-overlay.show { display: block; }
+.notes-overlay .meta { font: 13px var(--mono); color: var(--accent-2); margin-bottom: 8px; }
+.help { position: fixed; right: 20px; bottom: 20px; background: rgba(11,29,38,.9); color: #EAF2F3; font: 14px var(--mono); padding: 10px 14px; border-radius: 10px; z-index: 1002; display: none; }
+.help.show { display: block; }
+.edit-hotzone { position: fixed; left: 0; top: 0; width: 80px; height: 80px; z-index: 1003; }
+.edit-toggle { position: fixed; left: 16px; top: 16px; z-index: 1004; font: 600 14px var(--font); background: var(--ink); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 8px 12px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--accent); }
+@media print { .progress, .notes-overlay, .help, .edit-hotzone, .edit-toggle { display: none !important; } }
 </style>
 </head>
 <body>
@@ -448,14 +616,19 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
   </svg>
   <div class="pad">
     <div class="brand auto"><img src="assets/logo-round.png" alt="Logo Vcare"><span>V<b>care</b></span></div>
-    <h1 class="auto d1">Nhắc đúng mốc, tìm đúng ca, <em>bắt đầu bằng một câu nói.</em></h1>
-    <p class="tagline auto d2">Trợ lý hậu mãi AI cho chủ xe điện VinFast và cố vấn dịch vụ</p>
+    <div class="hook auto d1">
+      <div class="stat"><b>~40%</b><span>ô tô mới bán ra năm 2025<br>là xe điện <i>[1]</i></span></div>
+      <p>Mỗi chiếc đều có mốc bảo dưỡng. Bao nhiêu chiếc sẽ quay lại <em>đúng xưởng, đúng mốc?</em></p>
+    </div>
+    <h1 class="auto d2">Nhắc đúng mốc, tìm đúng ca, <em>bắt đầu bằng một câu nói.</em></h1>
+    <p class="tagline auto d3">Trợ lý hậu mãi AI giúp chuỗi xưởng xe điện giữ khách bảo dưỡng định kỳ</p>
   </div>
-  <div class="meta auto d3"><b>Nhóm P-100</b> · Dự án AI thực chiến · VinUni Build 2026</div>
+  <div class="meta auto d3"><div><b>Nhóm P-100</b> · Dự án AI thực chiến · VinUni Build 2026</div><span>[1] IEA Global EV Outlook 2026</span></div>
+  <div class="glow1"></div>
   <div class="phone auto d2"><div class="screen"><img src="assets/m07_review.png" alt="Màn Xem lại trước khi gửi"></div></div>
   <div class="bubble" id="typeBubble" data-text="Đặt lịch bảo dưỡng cho tôi vào ngày mai"><span class="tx"></span><span class="caret"></span></div>
   <div class="demo-note">Giao diện thật · dữ liệu demo</div>
-  <aside class="notes">Chào hội đồng, chúng em là nhóm P-100. Câu trên màn hình là điều chủ xe muốn nói với xưởng: đặt lịch bảo dưỡng cho tôi vào ngày mai. Một câu như vậy là điểm bắt đầu; chủ xe vẫn xem lại và xưởng xác nhận. Vcare là trợ lý hậu mãi AI cho chủ xe điện VinFast và cố vấn dịch vụ: nhắc đúng mốc theo dữ liệu xe, giải thích việc cần làm và tìm xưởng có ca phù hợp. Trong bảy phút, chúng em đi từ thị trường, người dùng, sản phẩm đang chạy đến cách đưa vào xưởng.</aside>
+  <aside class="notes">Chào hội đồng, chúng em là nhóm P-100. Năm 2025, cứ mười ô tô mới bán ra thì có bốn chiếc là xe điện. Mỗi chiếc rồi sẽ đến mốc bảo dưỡng, nhưng bao nhiêu chiếc quay lại đúng xưởng, đúng mốc? Với chuỗi xưởng, đó là doanh thu định kỳ có thể giữ hoặc mất. Vcare là trợ lý hậu mãi AI: nhắc chủ xe đúng mốc, giải thích việc cần làm và đưa họ vào ca còn trống, bắt đầu chỉ bằng một câu nói.</aside>
 </section>
 
 <!-- ============ SLIDE 2 — MARKET ============ -->
@@ -476,12 +649,12 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
         <div class="fact auto d2"><span class="v">175.099</span><span class="l">xe VinFast bàn giao năm 2025 <span class="code">[2]</span></span></div>
         <div class="fact auto d3"><span class="v">177.697</span><span class="l">xe VinFast trong 9 tháng 2026 <span class="code">[3]</span></span></div>
         <div class="fact auto d4"><span class="v">≥ 1 lượt</span><span class="l">bảo dưỡng định kỳ mỗi xe mỗi năm (mốc 15.000 km / 12 tháng) <span class="code">[5]</span></span></div>
-        <div class="bridge auto d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Mỗi lượt bảo dưỡng là một chủ xe phải <b>tự nhớ mốc, tự hỏi giá, tự tìm ca</b>. Như anh Minh.</span></div>
+        <div class="bridge auto d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Hơn 400 xưởng, mở rộng qua <b>đại lý và đối tác dịch vụ</b> <span class="code" style="color:#8FA3AB">[4][6]</span>, phải giữ chân lượng xe này. Mỗi lượt bảo dưỡng bắt đầu từ một chủ xe như anh Minh.</span></div>
       </div>
     </div>
   </div>
-  <footer class="foot"><span><a href="https://www.iea.org/reports/global-ev-outlook-2026/trends-in-electric-cars">[1] IEA GEVO 2026</a> · <a href="https://vinfastauto.com/vn_vi/vinfast-lap-ky-luc-ban-giao-xe-o-to-dien-tai-viet-nam-2025">[2] VinFast 13/01/2026</a> · <a href="https://tapchikinhtetaichinh.vn/vinfast-ban-giao-23-624-o-to-dien-tai-viet-nam-trong-thang-9-169227.html">[3] Tạp chí Kinh tế Tài chính 11/10/2026</a> · [4] DNHN 15/06/2026 · <a href="https://vinfastauto.com/vn_vi/dich-vu-bao-duong-oto">[5] VinFast</a> · 549.000đ/xưởng/tháng; TAM có giả định</span><span class="pg">02 / 14</span></footer>
-  <aside class="notes">Bắt đầu từ thị trường. Xe điện đang tăng nhanh: gần 40% ô tô mới bán ở Việt Nam năm 2025 là xe điện. VinFast là điển hình và là điểm bắt đầu của Vcare: chỉ 9 tháng 2026, hãng đã bàn giao 177.697 xe, vượt cả năm 2025. Tính từ đầu 2024, hãng đã bàn giao khoảng 440 nghìn ô tô điện trong nước, và mỗi xe có ít nhất một lượt bảo dưỡng định kỳ mỗi năm. Hơn 400 xưởng VinFast đang phục vụ lượng xe này. Tính theo thuê bao phần mềm cho xưởng, SAM khoảng 2,6 tỷ đồng mỗi năm; TAM 9,9 tỷ là giả định còn phải khảo sát. Chúng em bắt đầu từ VinFast vì đã có dữ liệu bảo dưỡng chuẩn hóa; các hãng khác là bước mở rộng. Nhưng đằng sau mỗi lượt bảo dưỡng là một chủ xe tự nhớ mốc, tự hỏi giá, tự tìm ca. Như anh Minh.</aside>
+  <footer class="foot"><span><a href="https://www.iea.org/reports/global-ev-outlook-2026/trends-in-electric-cars">[1] IEA GEVO 2026</a> · <a href="https://vinfastauto.com/vn_vi/vinfast-lap-ky-luc-ban-giao-xe-o-to-dien-tai-viet-nam-2025">[2] VinFast 13/01/2026</a> · <a href="https://tapchikinhtetaichinh.vn/vinfast-ban-giao-23-624-o-to-dien-tai-viet-nam-trong-thang-9-169227.html">[3] Tạp chí Kinh tế Tài chính 11/10/2026</a> · [4] DNHN 15/06/2026 · <a href="https://www.automotiveworld.com/news/vinfast-targets-1100-service-workshops-worldwide-in-2026/">[6] Automotive World</a> · <a href="https://vinfastauto.com/vn_vi/dich-vu-bao-duong-oto">[5] VinFast</a> · 549.000đ/xưởng/tháng; TAM có giả định</span><span class="pg">02 / 16</span></footer>
+  <aside class="notes">Bắt đầu từ thị trường. Gần 40% ô tô mới bán ở Việt Nam năm 2025 là xe điện. Chỉ 9 tháng 2026, VinFast đã bàn giao 177.697 xe, vượt cả năm 2025. Lượng xe này được phục vụ bởi hơn 400 xưởng, và mạng xưởng đang mở rộng qua đại lý và đối tác dịch vụ. Đó là khách hàng của Vcare: các chuỗi xưởng phải giữ chân hàng trăm nghìn xe quay lại bảo dưỡng định kỳ. Với giá thuê bao cho xưởng, SAM khoảng 2,6 tỷ đồng mỗi năm. Mỗi lượt bảo dưỡng bắt đầu từ một chủ xe, như anh Minh.</aside>
 </section>
 
 <!-- ============ SLIDE 3 — PERSONA ============ -->
@@ -510,8 +683,8 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
       </div>
     </div>
   </div>
-  <footer class="foot"><span>Tình huống minh họa từ vấn đề nhóm đặt ra; không phải trích dẫn hay số đo thực tế</span><span class="pg">03 / 14</span></footer>
-  <aside class="notes">Đây là Minh, một nhân vật minh họa: lái VF 8 Plus, sắp tới mốc 30.000 km. Minh bận việc, lịch cá nhân kín, nên dễ để lỡ mốc bảo dưỡng. Khi nhớ ra và hỏi xưởng, Minh chưa biết xưởng nào còn ca phù hợp, có khi nghe “ca sáng đủ rồi anh”. Kết quả là phải sắp xếp lại công việc và gia đình. Đây là tình huống minh họa từ vấn đề nhóm đặt ra, không phải trích dẫn hay số đo thực tế. Câu hỏi là: những điều này có thật với người dùng không?</aside>
+  <footer class="foot"><span>Tình huống minh họa từ vấn đề nhóm đặt ra; không phải trích dẫn hay số đo thực tế</span><span class="pg">03 / 16</span></footer>
+  <aside class="notes">Đây là Minh, nhân vật minh họa, lái VF 8 Plus sắp tới mốc 30.000 km. Minh bận, lịch cá nhân kín, nên dễ để lỡ mốc. Khi nhớ ra và hỏi xưởng, Minh chưa biết xưởng nào còn ca phù hợp. Kết quả là phải sắp xếp lại công việc. Đây là tình huống minh họa, không phải số đo thực tế.</aside>
 </section>
 
 <!-- ============ SLIDE 4 — PAIN POINTS / DISCOVERY ============ -->
@@ -548,16 +721,32 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
         </ul>
       </div>
     </div>
-    <div class="punch frag fade" data-s="3"><span>→</span>Phỏng vấn để hiểu hành vi; pilot để kiểm chứng hiệu quả.</div>
+    <div class="punch frag fade" data-s="3"><span>→</span>Phía xưởng cũng có vấn đề riêng. Phỏng vấn để hiểu hành vi; pilot để kiểm chứng hiệu quả.</div>
   </div>
-  <footer class="foot"><span>Khám phá định tính; chủ đề là hướng ưu tiên, chưa khẳng định mọi người đều gặp</span><span class="pg">04 / 14</span></footer>
-  <aside class="notes">Để kiểm tra, nhóm trao đổi với khoảng 10 chủ xe và 3 xưởng. Đây là khám phá định tính, nên chúng em không đưa ra tỷ lệ thị trường. Từ ghi chép, ba chủ đề lặp lại được chọn làm hướng ưu tiên: nhớ mốc chăm xe để chủ động sắp xếp; hiểu trước khi đến, tức là rõ công việc, dự toán và thời lượng; và tìm xưởng, tìm ca mà bớt công hỏi lại. Chúng em chưa khẳng định mọi người tham gia đều gặp cả ba. Nguyên tắc của nhóm: phỏng vấn để hiểu hành vi, pilot để kiểm chứng hiệu quả.</aside>
+  <footer class="foot"><span>Khám phá định tính; chủ đề là hướng ưu tiên, chưa khẳng định mọi người đều gặp</span><span class="pg">04 / 16</span></footer>
+  <aside class="notes">Nhóm trao đổi với khoảng 10 chủ xe và 3 xưởng. Đây là khám phá định tính, nên chúng em không đưa tỷ lệ thị trường. Ba chủ đề lặp lại phía chủ xe: nhớ mốc chăm xe, hiểu trước khi đến, và tìm xưởng, tìm ca mà bớt hỏi lại. Nhưng điều quan trọng hơn đến từ phía xưởng, người sẽ trả tiền cho Vcare.</aside>
 </section>
 
-<!-- ============ SLIDE 5 — JTBD ============ -->
+<!-- ============ SLIDE 5 — CHAIN PAINS ============ -->
+<section class="slide light s05b" data-title="Chuỗi xưởng đang mất gì">
+  <div class="pad">
+    <div class="kicker">05 · Khách hàng trả tiền: chuỗi xưởng</div>
+    <h2 class="hl" style="font-size:54px">Với chuỗi xưởng, mỗi xe đến mốc mà không quay lại là <span class="num">một lượt doanh thu định kỳ bị mất</span></h2>
+    <div class="loss">
+      <div class="lossc frag" data-s="1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/><path d="M12 8v4l3 2"/></svg></div><h3>Khách định kỳ rơi rụng</h3><p>Xe đến mốc nhưng không ai nhắc; khách quên hoặc đi nơi khác</p><span class="tag">→ mất doanh thu lặp lại</span></div>
+      <div class="lossc frag" data-s="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 15h3M13 15h3"/></svg></div><h3>Ca lúc kín, lúc trống</h3><p>Cố vấn nghe điện thoại hỏi ca, hỏi giá; lịch nằm rải rác trong Zalo, sổ tay</p><span class="tag">→ lãng phí công suất</span></div>
+      <div class="lossc frag" data-s="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg></div><h3>Không đồng nhất, không có số</h3><p>Mỗi cố vấn tư vấn một kiểu; quản lý chuỗi không thấy chỉ số chung</p><span class="tag">→ khó quản lý chất lượng</span></div>
+    </div>
+    <div class="who frag fade" data-s="3"><b>Người mua</b><span>Chuỗi đại lý, xưởng dịch vụ xe điện nhiều chi nhánh</span><b>Người dùng</b><span>Cố vấn dịch vụ và chủ xe của họ</span></div>
+  </div>
+  <footer class="foot"><span>Giả thuyết từ trao đổi với 3 xưởng; sẽ đo trong pilot, chưa phải số liệu thị trường</span><span class="pg">05 / 16</span></footer>
+  <aside class="notes">Người trả tiền cho Vcare là chuỗi xưởng: đại lý và xưởng dịch vụ xe điện nhiều chi nhánh. Từ 3 xưởng đã trao đổi, chúng em thấy ba điểm mất mát. Một: khách định kỳ rơi rụng, vì xe đến mốc mà không ai nhắc. Hai: ca lúc kín lúc trống, cố vấn mất thời gian nghe điện thoại hỏi ca, hỏi giá. Ba: mỗi người tư vấn một kiểu, và quản lý không có số liệu chung. Đây là giả thuyết, sẽ đo lại trong pilot.</aside>
+</section>
+
+<!-- ============ SLIDE 6 — JTBD ============ -->
 <section class="slide light s05" data-title="Jobs To Be Done">
   <div class="pad">
-    <div class="kicker">05 · Jobs To Be Done</div>
+    <div class="kicker">06 · Jobs To Be Done</div>
     <h2 class="hl" style="font-size:52px">Ba việc chủ xe cần làm xong khớp với <span class="num">ba việc xưởng cần làm được</span></h2>
     <div class="jgrid">
       <div class="jhead"><span class="av">M</span>Chủ xe</div><div></div><div class="jhead"><span class="av">CV</span>Xưởng / cố vấn dịch vụ</div>
@@ -572,14 +761,14 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
       <div class="job frag" data-s="3"><h4><span>JOB C</span>Chốt lịch xưởng thực hiện được</h4><p>Đề xuất lịch theo khả năng tiếp nhận — để giữ đúng lời hẹn</p></div>
     </div>
   </div>
-  <footer class="foot"><span>Rút gọn từ job story của khám phá định tính; bản đầy đủ trong tài liệu nhóm</span><span class="pg">05 / 14</span></footer>
-  <aside class="notes">Chúng em viết lại vấn đề thành job story cho cả hai phía, và chúng khớp nhau theo từng cặp. Chủ xe cần biết khi nào xe thực sự cần bảo dưỡng; xưởng cần biết đúng xe nào sắp đến hạn để chủ động liên hệ. Chủ xe cần hiểu và tin phương án: vì sao làm, căn cứ, chi phí; xưởng cần giải thích phương án bằng dữ liệu xe và bảng giá. Cuối cùng, chủ xe muốn một lịch ít gián đoạn, được xác nhận rõ; xưởng muốn chốt lịch mà mình thực sự làm được. Vcare được thiết kế quanh ba cặp việc này.</aside>
+  <footer class="foot"><span>Rút gọn từ job story của khám phá định tính; bản đầy đủ trong tài liệu nhóm</span><span class="pg">06 / 16</span></footer>
+  <aside class="notes">Chúng em viết vấn đề thành job story cho cả hai phía, và chúng khớp theo từng cặp. Chủ xe cần biết khi nào xe thực sự cần bảo dưỡng; xưởng cần biết xe nào sắp đến hạn để chủ động liên hệ. Chủ xe cần hiểu và tin phương án; xưởng cần giải thích bằng dữ liệu và bảng giá. Chủ xe muốn lịch ít gián đoạn; xưởng muốn chốt lịch mình làm được.</aside>
 </section>
 
-<!-- ============ SLIDE 6 — COMPETITORS ============ -->
+<!-- ============ SLIDE 7 — COMPETITORS ============ -->
 <section class="slide light s06" data-title="Đối thủ & giải pháp thay thế">
   <div class="pad">
-    <div class="kicker">06 · Đối thủ &amp; giải pháp thay thế</div>
+    <div class="kicker">07 · Đối thủ &amp; giải pháp thay thế</div>
     <h2 class="hl" style="font-size:52px">Vcare phát triển một tổ hợp: <span class="num">kế hoạch theo xe → tìm ca → gửi yêu cầu bằng hội thoại</span></h2>
     <div class="cmp">
       <div class="plane">
@@ -605,42 +794,42 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
       </div>
     </div>
   </div>
-  <footer class="foot"><span>Định vị giả thuyết, chưa benchmark · <a href="https://baodautu.vn/thay-doi-thoi-quen-su-dung-o-to-voi-ung-dung-quan-ly-xe-thong-minh-d168763.html">[a] Báo Đầu tư 30/06/2022</a> · <a href="https://open24.vn/gara-oto-xe-may">[b] open24.vn</a> · <a href="https://vcgarage.com/">[c] vcgarage.com</a> · <a href="https://vinfastauto.com/vn_vi/huong-dan-su-dung-tien-ich-dich-vu-tren-ung-dung-vinfast">app VinFast</a> · tra cứu 18/10/2026</span><span class="pg">06 / 14</span></footer>
+  <footer class="foot"><span>Định vị giả thuyết, chưa benchmark · <a href="https://baodautu.vn/thay-doi-thoi-quen-su-dung-o-to-voi-ung-dung-quan-ly-xe-thong-minh-d168763.html">[a] Báo Đầu tư 30/06/2022</a> · <a href="https://open24.vn/gara-oto-xe-may">[b] open24.vn</a> · <a href="https://vcgarage.com/">[c] vcgarage.com</a> · <a href="https://vinfastauto.com/vn_vi/huong-dan-su-dung-tien-ich-dich-vu-tren-ung-dung-vinfast">app VinFast</a> · tra cứu 18/10/2026</span><span class="pg">07 / 16</span></footer>
   <aside class="notes">Chủ xe và xưởng đang có lựa chọn tốt. Theo mô tả công khai, ứng dụng VinFast cho đặt lịch bảo dưỡng theo khung giờ trống tại xưởng VinFast. Open24 và VC Garage quản lý tiếp nhận, báo giá, kho, kế toán và có nhắc bảo dưỡng phía xưởng. Hotline và Zalo rất linh hoạt; việc lưu lịch tùy quy trình từng xưởng. Vcare nhắm vào một tổ hợp: kế hoạch theo xe có giải thích, tìm ca theo sức chứa, và gửi yêu cầu bằng hội thoại để cố vấn xác nhận. Đây là định vị giả thuyết, chưa phải kết quả benchmark, và chúng em chưa xác nhận tích hợp DMS hay hệ thống hãng.</aside>
 </section>
 
-<!-- ============ SLIDE 7 — SOLUTION ============ -->
-<section class="slide light s07" data-title="Giải pháp tổng quan">
+<!-- ============ SLIDE 8 — VALUE LOOP ============ -->
+<section class="slide light s08b" data-title="Giải pháp: vòng lặp giá trị">
   <div class="pad">
-    <div class="kicker">07 · Giải pháp</div>
-    <h2 class="hl">Vcare nối lời nhắc với <span class="num">yêu cầu có ngữ cảnh</span></h2>
-    <p class="pos auto"><b>Trợ lý hậu mãi AI cho xưởng dịch vụ xe điện;</b> app miễn phí cho chủ xe.</p>
-    <div class="vals">
-      <div class="val auto d1">
-        <div class="pp"><span class="p">1 Nhớ mốc chăm xe</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V1</span></div>
-        <h3>Nhắc đúng xe → hiểu việc cần làm</h3>
-        <div class="shot"><img src="assets/v1_notif.png" alt="Thông báo nhắc bảo dưỡng"></div>
+    <div class="kicker">08 · Giải pháp</div>
+    <h2 class="hl" style="font-size:54px">Vcare biến mỗi mốc bảo dưỡng thành <span class="num">một lượt khách quay lại đúng ca</span></h2>
+    <div class="loopw">
+      <div class="loop">
+        <svg class="loopring" viewBox="0 0 700 660" aria-hidden="true"><circle cx="350" cy="330" r="275" fill="none" stroke="#D7E0E4" stroke-width="3"/>
+          <circle class="ringp" cx="350" cy="330" r="275" fill="none" stroke="#0E8C8A" stroke-width="5" stroke-dasharray="1728" stroke-dashoffset="1728" transform="rotate(-90 350 330)"/></svg>
+        <div class="core"><img src="assets/logo-round.png" alt=""><b>Vcare</b><small>vòng lặp mỗi mốc</small></div>
+        <div class="ln frag" data-s="1" style="left:225px;top:-3px"><span>1</span><b>Xe đến mốc</b><small>Rule tính theo ODO, thời gian</small></div>
+        <div class="ln frag" data-s="2" style="left:487px;top:187px"><span>2</span><b>Nhắc chủ xe</b><small>Kèm kế hoạch, dự toán</small></div>
+        <div class="ln frag" data-s="3" style="left:387px;top:494px"><span>3</span><b>Tự đặt vào ca trống</b><small>AI hiểu nhu cầu, lọc ca</small></div>
+        <div class="ln frag" data-s="4" style="left:63px;top:494px"><span>4</span><b>Xưởng xác nhận</b><small>Cố vấn kiểm tra một lần</small></div>
+        <div class="ln frag" data-s="5" style="left:-37px;top:187px"><span>5</span><b>Dữ liệu cập nhật</b><small>Lần nhắc sau chính xác hơn</small></div>
       </div>
-      <div class="val auto d2">
-        <div class="pp"><span class="p">3 Tìm xưởng và ca</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V2</span></div>
-        <h3>Nói nhu cầu → tìm xưởng có ca phù hợp</h3>
-        <div class="shot"><img src="assets/v2_card.png" alt="Thẻ xưởng có ca phù hợp"></div>
-      </div>
-      <div class="val auto d3">
-        <div class="pp"><span class="p">2 Hiểu trước khi đến</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="v">V3</span></div>
-        <h3>Xem trước dự toán → xưởng xác nhận → hai bên cùng trạng thái</h3>
-        <div class="shot"><img src="assets/v3_status.png" alt="Chi phí tham khảo và trạng thái Đã xác nhận"></div>
+      <div class="vcol">
+        <div class="vbox frag" data-s="5"><div class="lbl">Chuỗi xưởng nhận được</div>
+          <ul><li><b>Giữ khách</b> quay lại đúng mốc</li><li><b>Lấp ca</b> trống, bớt điện thoại</li><li><b>Tư vấn đồng nhất</b> theo lịch hãng</li><li><b>Số liệu</b> vận hành mỗi xưởng</li></ul></div>
+        <div class="vbox alt frag" data-s="5"><div class="lbl">Chủ xe nhận được</div>
+          <ul><li>Nhớ mốc, hiểu trước chi phí</li><li>Đặt ca bằng một câu, app miễn phí</li></ul></div>
       </div>
     </div>
   </div>
-  <footer class="foot"><span>Giao diện thật · dữ liệu demo · thông báo nhắc mô phỏng · ảnh V2 trên xe VF 5 Plus</span><span class="pg">07 / 14</span></footer>
-  <aside class="notes">Giải pháp gói trong một câu: Vcare nối lời nhắc với một yêu cầu có ngữ cảnh. Thứ nhất, nhắc theo dữ liệu xe: ODO, thời gian và lịch sử. Thứ hai, giúp chủ xe hiểu kế hoạch và dự toán trước khi đến. Thứ ba, chủ xe nói nhu cầu, Vcare tìm xưởng có ca phù hợp theo vị trí và năng lực phục vụ; chủ xe xem lại, gửi, và xưởng xác nhận. Chúng em không hứa mọi lời nhắc đều thành lịch hẹn, hay khách đến nơi sẽ không phải chờ. Mục tiêu là bớt bước hỏi lại và hai bên cùng nhìn một trạng thái.</aside>
+  <footer class="foot"><span>Lời nhắc do rule theo lịch hãng và ODO; AI hỗ trợ hiểu nhu cầu và lọc ca, con người xác nhận</span><span class="pg">08 / 16</span></footer>
+  <aside class="notes">Giải pháp của chúng em là một vòng lặp. Xe đến mốc, hệ thống nhắc chủ xe kèm kế hoạch và dự toán. Chủ xe nói nhu cầu, Vcare lọc ca còn trống để khách tự đặt. Cố vấn kiểm tra và xác nhận một lần. Kết quả dịch vụ được cập nhật, nên lần nhắc sau chính xác hơn. Chuỗi xưởng trả tiền cho vòng lặp này: giữ khách quay lại, lấp ca trống, tư vấn đồng nhất và có số liệu. Chủ xe dùng app miễn phí.</aside>
 </section>
 
-<!-- ============ SLIDE 8 — SMART FLOW ============ -->
+<!-- ============ SLIDE 9 — SMART FLOW ============ -->
 <section class="slide light s08" data-title="Luồng thông minh">
   <div class="pad">
-    <div class="kicker">08 · Luồng thông minh</div>
+    <div class="kicker">09 · Luồng thông minh</div>
     <h2 class="hl" style="font-size:52px">Từ nhiều cuộc gọi rời rạc sang một luồng có ngữ cảnh: <span class="num">AI hỗ trợ 3 bước</span>, con người quyết định 2 bước</h2>
     <div class="lane before"><div class="lt" style="margin:0"><span>Trước</span><span class="time">Nhớ mốc → gọi xưởng → chờ gọi lại → hỏi ca → hỏi giá → đến nơi</span></div></div>
     <div class="lane after frag" data-s="1">
@@ -656,74 +845,46 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
     </div>
     <div class="legend"><span><span class="badge ai" style="background:#DCF0EF;color:#0E8C8A">✦ AI</span> AI hỗ trợ</span><span><span class="badge" style="background:#E6ECEE;color:#33454F">RULE</span> rule / scheduler</span><span><span class="badge" style="border:1px solid #33454F;color:#33454F">NGƯỜI</span> con người quyết định</span><span class="note">Minh họa rút gọn từ luồng thật</span></div>
   </div>
-  <footer class="foot"><span>K3 là mục tiêu pilot, chưa đo · lời nhắc do rule theo lịch hãng + ODO, không phải AI dự đoán hỏng hóc</span><span class="pg">08 / 14</span></footer>
-  <aside class="notes">Đây là chỗ AI thật sự làm việc. Trước đây, mỗi bước là một cuộc gọi hoặc một lần hỏi lại. Với Vcare, lời nhắc do rule tạo theo lịch hãng và ODO, không phải AI đoán hỏng. AI hỗ trợ ba bước: giải thích kế hoạch có nguồn và dự toán, hiểu “ngày mai” là ngày nào theo thời điểm yêu cầu, và lọc xưởng có ca theo vị trí, sức chứa và thời lượng gói. Hai bước cuối luôn là con người: chủ xe xem lại và bấm gửi, cố vấn kiểm tra và xác nhận. Mục tiêu pilot là dưới 3 phút từ yêu cầu đến lúc gửi được lịch hợp lệ.</aside>
+  <footer class="foot"><span>K3 là mục tiêu pilot, chưa đo · lời nhắc do rule theo lịch hãng + ODO, không phải AI dự đoán hỏng hóc</span><span class="pg">09 / 16</span></footer>
+  <aside class="notes">Bên trong vòng lặp, AI làm đúng ba việc: giải thích kế hoạch có nguồn, hiểu “ngày mai” là ngày nào, và lọc xưởng còn ca theo vị trí, sức chứa. Lời nhắc do rule tạo, không phải AI đoán hỏng. Hai bước cuối luôn là con người: chủ xe bấm gửi, cố vấn xác nhận. Mục tiêu pilot là dưới 3 phút từ yêu cầu đến khi gửi lịch hợp lệ.</aside>
 </section>
 
-<!-- ============ SLIDE 9 — DEMO 1 ============ -->
-<section class="slide light s09" data-title="Demo: nhắc và kế hoạch">
+<!-- ============ SLIDE 10 — OWNER EXPERIENCE ============ -->
+<section class="slide light s10b" data-title="Trải nghiệm chủ xe">
   <div class="pad">
-    <div class="kicker">09 · Demo 1/2 · nhắc → kế hoạch có căn cứ</div>
-    <h2 class="hl" style="font-size:52px">Còn <span class="num">100 km</span> tới mốc 30.000: Vcare nhắc và giải thích <span class="num">19 hạng mục</span> kèm dự toán trước khi chủ xe gọi ai</h2>
-    <div class="demo">
-      <div class="dcol frag" data-s="1">
-        <span class="lbl">① Nhận nhắc</span>
-        <div class="ph p1"><div class="sc"><div class="imw"><img src="assets/m01.png" alt="Thông báo nhắc bảo dưỡng"><span class="hi frag fade" data-s="1" style="top:11.3%;height:16.5%"></span></div></div></div>
-        <span class="callout">Nhắc theo ODO và thời gian</span>
-      </div>
+    <div class="kicker">10 · Trải nghiệm chủ xe</div>
+    <h2 class="hl" style="font-size:54px">Từ lời nhắc tới yêu cầu đặt lịch trong <span class="num">ba màn hình</span>, chủ xe luôn tự quyết</h2>
+    <div class="demo three">
+      <div class="dcol frag" data-s="1"><span class="lbl">① Được nhắc đúng mốc</span><div class="ph"><div class="sc"><img src="assets/m01.png" alt="Thông báo nhắc bảo dưỡng"></div></div><span class="callout">Nhớ mốc mà không cần tự theo dõi</span></div>
       <div class="arrow frag fade" data-s="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="dcol frag" data-s="2">
-        <span class="lbl">② Mở kế hoạch</span>
-        <div class="ph p2"><div class="sc"><div class="imw"><img src="assets/m03.png" alt="Kế hoạch mốc 30.000 km"><span class="hi frag fade" data-s="3" style="top:31.4%;height:8.5%"></span></div></div></div>
-        <span class="callout frag fade" data-s="3">Dự toán 1,14–2,85 triệu · 215 phút</span>
-      </div>
-      <div class="arrow frag fade" data-s="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="dcol frag" data-s="4">
-        <span class="lbl">③ Hỏi “vì sao”</span>
-        <div class="ph p3"><div class="sc"><div class="imw"><img src="assets/m04.png" alt="Trả lời có nguồn S1 S2"><span class="hi frag fade" data-s="5" style="top:66.4%;height:12.6%"></span></div></div></div>
-        <span class="callout frag fade" data-s="5">Trả lời có nguồn HDSD VF 8</span>
-      </div>
-    </div>
-  </div>
-  <footer class="foot"><span>Ảnh chụp local 18/10/2026 · dữ liệu demo · thông báo ① mô phỏng · giá ước tính xưởng, không phải bảng giá hãng</span><span class="pg">09 / 14</span></footer>
-  <aside class="notes">Đây là màn hình thật, dữ liệu demo. Xe VF 8 Plus còn 100 km tới mốc 30.000. Minh nhận nhắc, mở ra là kế hoạch của mốc này: 19 hạng mục, một cần thay là lọc gió điều hòa, 18 kiểm tra, khoảng 215 phút, dự toán 1,14 đến 2,85 triệu. Minh hỏi tiếp “vì sao phải kiểm tra má phanh”, trợ lý trả lời bằng hướng dẫn sử dụng VF 8, đánh số nguồn, bấm vào là mở đúng chương. Không có căn cứ thì trợ lý nói chưa tìm thấy, không tự bịa.</aside>
-</section>
-
-<!-- ============ SLIDE 10 — DEMO 2 ============ -->
-<section class="slide light s10" data-title="Demo: gửi yêu cầu và xưởng xử lý">
-  <div class="pad">
-    <div class="kicker">10 · Demo 2/2 · gửi yêu cầu → xưởng xử lý</div>
-    <h2 class="hl" style="font-size:52px">Khách xem lại và gửi; <span class="num">cố vấn kiểm tra, xác nhận</span>; chủ xe theo dõi trạng thái</h2>
-    <div class="demo">
-      <div class="dcol frag" data-s="1">
-        <span class="lbl">① Chọn xưởng và ca</span>
-        <div class="ph p1"><div class="sc"><div class="imw"><img src="assets/m06.png" alt="Xưởng có ca phù hợp"><span class="hi frag fade" data-s="2" style="top:46.4%;height:13.0%"></span></div></div></div>
-        <span class="callout frag fade" data-s="2">Hiểu ngày theo thời điểm yêu cầu</span>
-        <span class="callout frag fade" data-s="2">Khoảng cách khi Maps có dữ liệu</span>
-      </div>
+      <div class="dcol frag" data-s="2"><span class="lbl">② Hiểu việc cần làm</span><div class="ph"><div class="sc"><img src="assets/m03.png" alt="Kế hoạch và dự toán"></div></div><span class="callout">Biết trước hạng mục, chi phí, thời lượng</span></div>
       <div class="arrow frag fade" data-s="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="dcol frag" data-s="3">
-        <span class="lbl">② Xem lại và gửi</span>
-        <div class="ph p2"><div class="sc"><div class="imw"><img src="assets/m07.png" alt="Xem lại trước khi gửi"><span class="hi frag fade" data-s="4" style="top:41.0%;height:13.5%"></span></div></div></div>
-        <span class="callout frag fade" data-s="4">Khách tự bấm gửi</span>
-      </div>
-      <div class="arrow frag fade" data-s="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      <div class="dcol wide frag" data-s="5">
-        <span class="lbl">③ Cố vấn kiểm tra, xác nhận</span>
-        <div class="panel"><div class="bar"><i></i><i></i><i></i>&nbsp;Cổng xưởng · Gara Trâu Quỳ</div><img src="assets/a_drawer.png" alt="Chi tiết lịch phía cố vấn"></div>
-        <span class="callout">Xưởng thấy đủ: xe, ODO, giờ hẹn, nguồn phiếu</span>
-        <div class="sync"><span class="st wait">Chờ xác nhận</span><span class="bar"></span><span class="st ok">Đã xác nhận</span><span class="syn">→ hiện trên app chủ xe</span></div>
-      </div>
+      <div class="dcol frag" data-s="3"><span class="lbl">③ Xem lại và gửi</span><div class="ph"><div class="sc"><img src="assets/m07.png" alt="Xem lại và gửi yêu cầu"></div></div><span class="callout">Một câu nói, ca còn chỗ, tự bấm gửi</span></div>
     </div>
   </div>
-  <footer class="foot"><span>Ảnh ①–② trên xe VF 5 Plus; ③ là lịch #492496 · xưởng mẫu · gợi ý chưa giữ chỗ</span><span class="pg">10 / 14</span></footer>
-  <aside class="notes">Từ kế hoạch, Minh nói nhu cầu bằng một câu. Vcare hiểu “ngày mai” theo thời điểm yêu cầu, lấy vị trí, và chỉ gợi ý xưởng còn ca đủ thời lượng gói; khoảng cách hiển thị khi Maps có dữ liệu. Minh xem lại một lần và tự bấm gửi; gợi ý chưa giữ chỗ, hệ thống kiểm tra lại sức chứa khi gửi. Phía xưởng, cố vấn mở lịch và thấy đủ thông tin: xe, ODO, giờ hẹn, nguồn phiếu, rồi xác nhận. Phía chủ xe, Minh thấy trạng thái chuyển sang đã xác nhận cùng tiến trình các bước. Hai phía cùng nhìn một lịch.</aside>
+  <footer class="foot"><span>Giao diện thật, dữ liệu demo · thông báo ① mô phỏng · ảnh ③ trên xe VF 5 Plus</span><span class="pg">10 / 16</span></footer>
+  <aside class="notes">Với chủ xe, trải nghiệm chỉ gồm ba màn hình. Được nhắc đúng mốc mà không cần tự theo dõi. Mở ra là thấy hạng mục, dự toán và thời lượng, kèm nguồn tài liệu khi hỏi vì sao. Rồi nói một câu, chọn ca còn chỗ và tự bấm gửi. Chủ xe luôn là người quyết định, Vcare chỉ rút ngắn đường đi.</aside>
 </section>
 
-<!-- ============ SLIDE 11 — ARCHITECTURE ============ -->
+<!-- ============ SLIDE 11 — WORKSHOP PORTAL ============ -->
+<section class="slide light s11b" data-title="Cổng xưởng: lợi ích cho chuỗi">
+  <div class="pad">
+    <div class="kicker">11 · Cổng xưởng</div>
+    <h2 class="hl" style="font-size:54px">Với xưởng: biết <span class="num">xe nào cần gọi</span>, <span class="num">ca nào còn trống</span> và <span class="num">làm tốt đến đâu</span></h2>
+    <div class="wsrows">
+      <div class="wsr frag" data-s="1"><div class="wsl"><span>1</span><b>Giữ khách quay lại</b><small>Danh sách xe đến hạn chưa có lịch</small></div><div class="wsi"><img src="assets/w_dash.png" alt="Điều phối: cần gọi khách"></div></div>
+      <div class="wsr frag" data-s="2"><div class="wsl"><span>2</span><b>Lấp ca trống</b><small>Hạn ngạch từng ca; khách tự đặt vào ca còn chỗ</small></div><div class="wsi"><img src="assets/w_week.png" alt="Lịch tuần và hạn ngạch ca"></div></div>
+      <div class="wsr frag" data-s="3"><div class="wsl"><span>3</span><b>Đo được hiệu quả</b><small>Chỉ số so với mục tiêu, theo từng xưởng</small></div><div class="wsi"><img src="assets/w_kpi.png" alt="Thống kê chỉ số vận hành"></div></div>
+    </div>
+  </div>
+  <footer class="foot"><span>Giao diện thật · <b>số liệu minh họa</b> cho một xưởng 11 suất/ngày, không phải kết quả khách hàng · dashboard toàn chuỗi là roadmap</span><span class="pg">11 / 16</span></footer>
+  <aside class="notes">Phía xưởng, Cổng xưởng trả lời ba câu hỏi của người quản lý. Một: xe nào cần gọi. Hệ thống lọc xe đã phục vụ, đến hạn mà chưa có lịch, để cố vấn chủ động mời khách quay lại. Hai: ca nào còn trống. Xưởng đặt hạn ngạch từng ca, khách tự đặt vào ca còn chỗ nên bớt điện thoại. Ba: làm tốt đến đâu. Các chỉ số như trả lời khách trong một giờ, lịch không thành, suất đã nhận được so với mục tiêu. Số trên màn hình là minh họa; dashboard gộp toàn chuỗi là bước tiếp theo.</aside>
+</section>
+
+<!-- ============ SLIDE 12 — ARCHITECTURE ============ -->
 <section class="slide light s11" data-title="Kiến trúc & ranh giới AI">
   <div class="pad">
-    <div class="kicker">11 · Kiến trúc &amp; ranh giới AI</div>
+    <div class="kicker">12 · Kiến trúc &amp; ranh giới AI</div>
     <h2 class="hl" style="font-size:52px">AI hiểu và giải thích; <span class="num">hệ thống kiểm tra giá, ca, quyền và trạng thái</span></h2>
     <div class="arch">
       <div class="tier frag" data-s="1"><div class="lbl">Dữ liệu</div><h3>Nguồn sự thật</h3><ul><li>Hồ sơ xe, ODO, lịch sử</li><li>Lịch bảo dưỡng hãng</li><li>HDSD VF 3 / 5 / 8</li><li>Sức chứa ca của xưởng</li></ul></div>
@@ -741,72 +902,86 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
       <div class="lay"><span>3</span><div><b>Giá, ca, trạng thái chỉ qua tool → service</b><small>AI không ghi trực tiếp vào dữ liệu</small></div></div>
     </div>
   </div>
-  <footer class="foot"><span>Chọn dữ kiện và OCR qua kiểm thử thành phần trên bộ tổng hợp nhỏ (15/10/2026); chưa phải độ chính xác chung</span><span class="pg">11 / 14</span></footer>
-  <aside class="notes">Về kỹ thuật, ranh giới rất rõ: AI hiểu và giải thích, hệ thống kiểm tra. AI agent trên LangGraph và Gemini Flash-Lite hiểu câu nói, ngày tương đối, chọn dữ kiện và trả lời bằng tài liệu có nguồn. Nhưng giá, ca còn sức chứa, quyền theo vai trò và trạng thái lịch đều do backend FastAPI và PostgreSQL quyết định, trong giao dịch có khóa theo xưởng. AI chỉ gọi tool, không tự ghi dữ liệu. Với câu hỏi kỹ thuật, LLM chỉ chọn đoạn tài liệu theo mã và câu trả lời là trích nguyên văn có nguồn; không có căn cứ thì hệ thống báo chưa tìm thấy. Chúng em không nói AI không thể sai: nó vẫn có thể chọn nhầm đoạn, nên pilot sẽ đo lại trên câu hỏi thật.</aside>
+  <footer class="foot"><span>Chọn dữ kiện và OCR qua kiểm thử thành phần trên bộ tổng hợp nhỏ (15/10/2026); chưa phải độ chính xác chung</span><span class="pg">12 / 16</span></footer>
+  <aside class="notes">Về kỹ thuật, ranh giới rõ ràng: AI hiểu và giải thích, hệ thống kiểm tra. Với câu hỏi kỹ thuật, LLM chỉ chọn đoạn tài liệu theo mã, câu trả lời là trích nguyên văn có nguồn; không có căn cứ thì báo chưa tìm thấy. Giá, ca, quyền và trạng thái lịch do backend quyết định. AI vẫn có thể chọn nhầm đoạn, nên pilot sẽ đo lại trên câu hỏi thật.</aside>
 </section>
 
-<!-- ============ SLIDE 12 — GTM ============ -->
-<section class="slide light s12" data-title="GTM & mô hình kinh doanh">
+<!-- ============ SLIDE 13 — GTM CHAIN ============ -->
+<section class="slide light s13b" data-title="GTM cho chuỗi xưởng">
   <div class="pad">
-    <div class="kicker">12 · GTM &amp; mô hình kinh doanh</div>
-    <h2 class="hl" style="font-size:52px">Giá đề xuất <span class="num">399.000đ/xưởng/tháng</span>, chủ xe dùng miễn phí; mỗi xưởng đưa app đến khách của chính mình</h2>
-    <div class="gtm">
-      <div class="money">
-        <div class="lbl">Mô hình B2B2C · dòng tiền</div>
-        <p class="b2b" style="margin-bottom:34px">Bán cho <b>xưởng (B2B)</b>, xưởng mời <b>chủ xe</b> dùng app <b>(B2C)</b></p>
-        <div class="mrow"><span class="node ws">Xưởng</span><span class="flowline"><span>thuê bao</span></span><span class="node vc">Vcare</span></div>
-        <div class="mrow"><span class="node">Chủ xe</span><span class="flowline muted"><span>tiền sửa xe (tách riêng phí phần mềm)</span></span><span class="node ws">Xưởng</span></div>
-        <div class="valbox"><div class="vb-k">Ví dụ giá trị cho xưởng</div><div class="vb-m">60 yêu cầu × bớt 8 phút = <b>8 giờ công ≈ 600 nghìn/tháng</b></div><div class="vb-s">Phép tính minh họa · giá được kiểm chứng trong pilot (≥ 1 xưởng đồng ý ký)</div></div>
+    <div class="kicker">13 · GTM &amp; mô hình kinh doanh</div>
+    <h2 class="hl" style="font-size:54px">Bán cho chuỗi: <span class="num">pilot 1–2 chi nhánh</span>, đo hiệu quả, rồi nhân ra toàn chuỗi</h2>
+    <div class="gtm2">
+      <div class="motion">
+        <div class="lbl">Cách bán</div>
+        <div class="mstep auto d1"><span>1</span><div><b>Pilot 1–2 chi nhánh</b><small>4 tuần, đo hiện trạng ở tuần đầu</small></div></div>
+        <div class="mstep auto d2"><span>2</span><div><b>Chứng minh bằng số</b><small>Xe quay lại, ca được lấp, thời gian phản hồi</small></div></div>
+        <div class="mstep auto d3"><span>3</span><div><b>Mở rộng toàn chuỗi</b><small>Giấy phép theo số xưởng, triển khai từng đợt</small></div></div>
+        <div class="flowmini auto d4"><b>Dòng tiền</b>Chuỗi trả thuê bao cho Vcare · chủ xe trả tiền dịch vụ cho xưởng, tách riêng · app chủ xe miễn phí</div>
       </div>
-      <div class="prices">
-        <div class="price main auto d1"><div class="name">Cơ bản</div><div class="amt">399.000đ <small>/ xưởng / tháng</small></div><div class="inc">Đặt lịch, hồ sơ xe, kế hoạch, trợ lý, dashboard · trả năm 3,99 triệu</div></div>
-        <div class="price auto d2"><div class="name">Nâng cao</div><div class="amt">699.000đ <small>/ xưởng / tháng</small></div><div class="inc">Thêm CSKH, nhắc nâng cao, báo cáo · trả năm 6,99 triệu</div></div>
-        <div class="money chanbox auto d3">
-        <div class="lbl">Kênh bán</div>
-        <div class="chan">
-          <div><span>1</span>Bán trực tiếp xưởng Hà Nội</div>
-          <div><span>2</span>Chuỗi / đối tác dịch vụ trong hệ sinh thái (đề xuất làm việc với VinFast Service, mạng xưởng đối tác GSM)</div>
-          <div><span>3</span>QR tại quầy xưởng để chủ xe cài app</div>
-        </div>
-        </div>
+      <div class="plans">
+        <div class="price auto d1"><div class="name">Từng xưởng · Cơ bản</div><div class="amt">399.000đ <small>/ xưởng / tháng</small></div><div class="inc">Đặt lịch, hồ sơ xe, kế hoạch, trợ lý, thống kê</div></div>
+        <div class="price auto d2"><div class="name">Từng xưởng · Nâng cao</div><div class="amt">699.000đ <small>/ xưởng / tháng</small></div><div class="inc">Thêm CSKH, nhắc nâng cao, báo cáo</div></div>
+        <div class="price main auto d3"><div class="name">Giấy phép chuỗi</div><div class="amt">180 triệu <small>/ đến 20 xưởng</small></div><div class="inc">330 triệu đến 50 xưởng · gồm triển khai · bảo trì từ năm 2: 15% phí giấy phép</div></div>
       </div>
     </div>
   </div>
-  <footer class="foot"><span>Giá đề xuất của nhóm, chưa gồm VAT, chưa có doanh thu · chưa có đối tác xác nhận, không gắn logo VinFast/GSM</span><span class="pg">12 / 14</span></footer>
-  <aside class="notes">Người trả tiền là xưởng. Giá đề xuất cho gói cơ bản là 399 nghìn một tháng, chưa gồm VAT, kèm hạn mức lượt AI và OCR theo gói; đổi lại xưởng có app đặt lịch cho khách của mình, hồ sơ xe, kế hoạch, trợ lý và dashboard. Chủ xe dùng miễn phí. Tiền sửa xe vẫn trả thẳng cho xưởng, tách riêng phí phần mềm, chúng em không lấy hoa hồng. Ví dụ minh họa: 60 yêu cầu một tháng, mỗi yêu cầu bớt 8 phút tư vấn là 8 giờ công, khoảng 600 nghìn. Kênh đầu tiên là bán trực tiếp ở Hà Nội; tiếp theo, chúng em mong làm việc với mạng xưởng trong hệ sinh thái. Đây là đề xuất, chưa có đối tác xác nhận.</aside>
+  <footer class="foot"><span>Giá đề xuất của nhóm, chưa gồm VAT, chưa có doanh thu · chưa có đối tác xác nhận, không gắn logo</span><span class="pg">13 / 16</span></footer>
+  <aside class="notes">Khách hàng của chúng em là chuỗi, nên cách bán cũng theo chuỗi. Bắt đầu bằng pilot bốn tuần ở một đến hai chi nhánh, tuần đầu đo hiện trạng. Khi có số về xe quay lại, ca được lấp và thời gian phản hồi, chuỗi mở rộng ra toàn bộ chi nhánh. Xưởng lẻ trả từ 399 nghìn mỗi tháng; chuỗi mua giấy phép, 180 triệu cho tối đa 20 xưởng. Tiền dịch vụ của chủ xe vẫn trả thẳng cho xưởng, app chủ xe miễn phí. Đây là giá đề xuất, chưa có đối tác xác nhận.</aside>
 </section>
 
-<!-- ============ SLIDE 13 — ROADMAP ============ -->
+<!-- ============ SLIDE 14 — ROADMAP ============ -->
 <section class="slide light s13" data-title="Lộ trình 3 giai đoạn">
   <div class="pad">
-    <div class="kicker">13 · Lộ trình</div>
-    <h2 class="hl" style="font-size:52px"><span class="num">4 tuần</span> pilot với 1–2 xưởng để đo hiệu quả thật, rồi mới mở rộng bán</h2>
+    <div class="kicker">14 · Lộ trình</div>
+    <h2 class="hl" style="font-size:52px"><span class="num">4 tuần</span> pilot với 1–2 chi nhánh để đo hiệu quả thật, rồi mới mở ra toàn chuỗi</h2>
     <div class="road">
       <div class="track"></div>
       <div class="phase p1 auto d1"><span class="dot">1</span>
-        <div class="card"><div class="pn">Giai đoạn 1 · Pilot</div><h3>4 tuần</h3><div class="when">1–2 xưởng · 20–30 chủ xe</div>
-          <div class="kpi">Nhắc → mở kế hoạch ≥ 35%</div>
+        <div class="card"><div class="pn">Giai đoạn 1 · Pilot</div><h3>4 tuần</h3><div class="when">1–2 chi nhánh · 20–30 chủ xe</div>
+          <div class="kpi">Xe đến hạn được nhắc → đặt lịch ≥ 20%</div>
           <div class="kpi">Từ yêu cầu đến gửi lịch ≤ 3 phút</div>
           <div class="kpi">Xưởng trả lời trong 1 giờ ≥ 80%</div>
-          <div class="kpi">≥ 1 xưởng đồng ý ký</div></div></div>
+          <div class="kpi">≥ 1 chuỗi đồng ý ký</div></div></div>
       <div class="phase auto d2"><span class="dot">2</span>
         <div class="card"><div class="pn">Giai đoạn 2 · Mở rộng</div><h3>Tháng 3–9</h3><div class="when">Hà Nội</div>
           <div class="kpi">10 xưởng trả phí <span class="rev">≈ 4 triệu đ/tháng</span></div>
           <div class="kpi">1.500 chủ xe hoạt động</div>
-          <div class="kpi">Lịch không thành ≤ 10%</div></div></div>
+          <div class="kpi">Lấp ca ≥ 75% · lịch không thành ≤ 10%</div></div></div>
       <div class="phase auto d3"><span class="dot">3</span>
         <div class="card"><div class="pn">Giai đoạn 3 · Scale</div><h3>Năm 2–3</h3><div class="when">Đa dòng xe / đối tác</div>
           <div class="kpi">60 xưởng (SOM) <span class="rev">≈ 395 triệu đ/năm</span></div>
           <div class="kpi">Giữ chân xưởng ≥ 85%</div>
-          <div class="kpi">Mở rộng dòng xe, đối tác</div></div></div>
+          <div class="kpi">Dashboard toàn chuỗi (roadmap)</div></div></div>
     </div>
-    <div class="next auto d4"><b>CẦN ĐỂ BẮT ĐẦU</b><span>1–2 xưởng pilot tại Hà Nội</span><span>Dữ liệu được phép sử dụng</span><span>Mentor thương mại hóa</span></div>
   </div>
-  <footer class="foot"><span>KPI là mục tiêu, chưa đo · tuần 1 của pilot đo hiện trạng để so sánh</span><span class="pg">13 / 14</span></footer>
-  <aside class="notes">Bước tiếp theo không phải mở rộng ngay, mà là pilot bốn tuần với một đến hai xưởng và 20 đến 30 chủ xe. Tuần một đo hiện trạng, tuần hai và ba dùng có giám sát, tuần bốn so sánh. Thành công nghĩa là: từ yêu cầu đến gửi lịch dưới 3 phút, xưởng trả lời trong một giờ trên 80%, và ít nhất một xưởng đồng ý trả phí. Sau đó mới mở 10 xưởng ở Hà Nội và hướng tới 60 xưởng trong ba năm. Để bắt đầu, chúng em cần xưởng pilot, dữ liệu được phép sử dụng và một mentor thương mại hóa.</aside>
+  <footer class="foot"><span>KPI là mục tiêu, chưa đo · tuần 1 của pilot đo hiện trạng để so sánh</span><span class="pg">14 / 16</span></footer>
+  <aside class="notes">Bước tiếp theo là pilot bốn tuần với một đến hai chi nhánh của một chuỗi. Thành công nghĩa là: ít nhất 20% xe đến hạn được nhắc quay lại đặt lịch, từ yêu cầu đến gửi lịch dưới 3 phút, xưởng trả lời trong một giờ trên 80%, và chuỗi đồng ý ký. Sau đó mở 10 xưởng trả phí, khoảng 4 triệu mỗi tháng, rồi hướng tới 60 xưởng và dashboard toàn chuỗi. </aside>
 </section>
 
-<!-- ============ SLIDE 14 — CẢM ƠN ============ -->
+<!-- ============ SLIDE 15 — TEAM ASK ============ -->
+<section class="slide light s15t" data-title="Đội ngũ + Ask">
+  <div class="pad">
+    <div class="kicker">15 · Đội ngũ + Ask</div>
+    <h2 class="hl" style="font-size:54px">Bốn người phủ trọn sản phẩm, AI, dữ liệu và cổng xưởng; <span class="num">cần một chuỗi pilot</span> để đi tiếp</h2>
+    <div class="team2">
+      <div class="tm auto d1"><span class="av">LK</span><b>Nguyễn Long Khánh</b><span class="role">Team Lead · BA · Frontend</span><small>Nghiên cứu người dùng, sản phẩm, app chủ xe</small></div>
+      <div class="tm auto d2"><span class="av">DK</span><b>Nguyễn Duy Khánh</b><span class="role">AI Engineering</span><small>Trợ lý hội thoại, RAG có nguồn, chặn bịa thông tin</small></div>
+      <div class="tm auto d3"><span class="av">VA</span><b>Nguyễn Văn An</b><span class="role">Data · Backend</span><small>Dữ liệu bảo dưỡng, đặt lịch theo ca, API, triển khai</small></div>
+      <div class="tm auto d4"><span class="av">XD</span><b>Lưu Xuân Dũng</b><span class="role">FullStack</span><small>Cổng xưởng, thống kê vận hành, sổ chăm xe</small></div>
+    </div>
+    <div class="asks2">
+      <div class="asklbl">Chúng em cần</div>
+      <div class="ask2 frag" data-s="1"><span>1</span><div><b>1–2 chi nhánh pilot</b><small>của một chuỗi xưởng tại Hà Nội, 4 tuần</small></div></div>
+      <div class="ask2 frag" data-s="2"><span>2</span><div><b>Dữ liệu được phép dùng</b><small>lịch bảo dưỡng, hướng dẫn sử dụng, lịch sử dịch vụ</small></div></div>
+      <div class="ask2 frag" data-s="3"><span>3</span><div><b>Mentor thương mại hóa</b><small>trong hệ sinh thái xe điện và dịch vụ</small></div></div>
+    </div>
+  </div>
+  <footer class="foot"><span>Mã nguồn: github.com/AI20K-Build-Phase-Cohort-4/P-100</span><span class="pg">15 / 16</span></footer>
+  <aside class="notes">Nhóm có bốn người. Long Khánh làm trưởng nhóm, BA và app chủ xe. Duy Khánh phụ trách AI: trợ lý hội thoại và trả lời có nguồn. Văn An lo dữ liệu bảo dưỡng và backend đặt lịch theo ca. Xuân Dũng làm full-stack Cổng xưởng và thống kê. Sản phẩm đã chạy; thứ còn thiếu là một chuỗi xưởng thật. Chúng em xin ba điều: một đến hai chi nhánh pilot, dữ liệu được phép sử dụng và một mentor thương mại hóa.</aside>
+</section>
+
+<!-- ============ SLIDE 16 — CẢM ƠN ============ -->
 <section class="slide dark s14" data-title="Cảm ơn">
   <div class="glow"></div>
   <div class="floor"></div>
@@ -818,7 +993,7 @@ body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: anti
     <div class="tag auto d2">Nhắc đúng mốc, tìm đúng ca, <em>bắt đầu bằng một câu nói.</em></div>
     <div class="try auto d3"><img src="assets/qr-vcare.png" alt="Mã QR tới vcare-landing.vercel.app"><div><b>Quét mã để trải nghiệm</b><span>vcare-landing.vercel.app</span><small>Nhóm P-100 · sẵn sàng nhận câu hỏi</small></div></div>
   </div>
-  <footer class="foot"><span class="links">vcare-landing.vercel.app · github.com/AI20K-Build-Phase-Cohort-4/P-100</span><span class="pg">14 / 14</span></footer>
+  <footer class="foot"><span class="links">vcare-landing.vercel.app · github.com/AI20K-Build-Phase-Cohort-4/P-100</span><span class="pg">16 / 16</span></footer>
   <aside class="notes">Vcare: nhắc đúng mốc, tìm đúng ca, bắt đầu bằng một câu nói. Mời hội đồng quét mã trên màn hình để trải nghiệm Vcare. Cảm ơn hội đồng đã lắng nghe, chúng em sẵn sàng nhận câu hỏi.</aside>
 </section>
 
@@ -846,7 +1021,10 @@ class SlidePresentation {
     this.maxSteps = this.slides.map(s => Math.max(0, ...[...s.querySelectorAll('[data-s]')].map(e => +e.dataset.s)));
     this.setupStageScale(); this.setupNav();
     const h = parseInt(location.hash.slice(1), 10);
-    this.render(isNaN(h) ? 0 : Math.min(h - 1, this.slides.length - 1), 0, false);
+    const i0 = isNaN(h) ? 0 : Math.min(h - 1, this.slides.length - 1);
+    /* ?final#n: mở thẳng trạng thái cuối của slide n (chụp ảnh / export) */
+    if (new URLSearchParams(location.search).has('final')) { document.documentElement.classList.add('capture'); this.goToSlide(i0); }
+    else this.render(i0, 0, false);
   }
   setupStageScale() {
     const scale = () => {
